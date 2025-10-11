@@ -64,14 +64,15 @@ const Header = () => {
               </span>
             </div>
 
-            {/* Main Heading dengan Typewriter Effect yang Lebih Natural */}
+            {/* Main Heading dengan Layout Responsif */}
             <div className="mb-4 md:mb-6">
-              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                <div className="flex flex-col items-center justify-center">
-                  {/* Baris Pertama */}
-                  <div className="flex justify-center items-baseline min-h-[1.2em] mb-2">
+              <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+                {/* Untuk Semua Device - Layout Horizontal */}
+                <div className="flex flex-col items-center">
+                  {/* Baris Pertama: Temukan [Kata Berubah] */}
+                  <div className="flex justify-center items-baseline flex-wrap gap-2 sm:gap-3 mb-2 px-2">
                     <span className="whitespace-nowrap">Temukan</span>
-                    <span className="bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent mx-2 min-w-[220px] text-center inline-block">
+                    <span className="bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent min-w-[140px] sm:min-w-[160px] md:min-w-[180px] text-center">
                       <Typewriter
                         options={{
                           strings: ["Pasangan", "Magang"],
@@ -86,11 +87,11 @@ const Header = () => {
                         onInit={(typewriter) => {
                           typewriter
                             .typeString("Pasangan")
-                            .pauseFor(2500) // Jeda lebih lama setelah selesai mengetik
-                            .deleteChars(8) // Hapus perlahan
+                            .pauseFor(2500)
+                            .deleteChars(8)
                             .pauseFor(500)
                             .typeString("Magang")
-                            .pauseFor(2500) // Jeda lebih lama
+                            .pauseFor(2500)
                             .deleteChars(6)
                             .pauseFor(500)
                             .start();
@@ -99,22 +100,60 @@ const Header = () => {
                     </span>
                   </div>
 
-                  {/* Baris Kedua */}
-                  <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
-                    Impian Anda
+                  {/* Baris Kedua: Impian Anda */}
+                  <div className="whitespace-nowrap">Impian Anda</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Alternatif Layout untuk Tablet */}
+            <div className="mb-4 md:mb-6 hidden md:block lg:hidden">
+              <div className="text-4xl md:text-5xl font-bold leading-tight">
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-baseline space-x-2">
+                      <span>Temukan</span>
+                      <span className="bg-gradient-to-r from-amber-300 to-yellow-400 bg-clip-text text-transparent min-w-[180px] text-center">
+                        <Typewriter
+                          options={{
+                            strings: ["Pasangan", "Magang"],
+                            autoStart: true,
+                            loop: true,
+                            delay: 120,
+                            deleteSpeed: 80,
+                            cursor: "|",
+                            cursorClassName:
+                              "Typewriter__cursor text-amber-300 ml-1",
+                          }}
+                          onInit={(typewriter) => {
+                            typewriter
+                              .typeString("Pasangan")
+                              .pauseFor(2500)
+                              .deleteChars(8)
+                              .pauseFor(500)
+                              .typeString("Magang")
+                              .pauseFor(2500)
+                              .deleteChars(6)
+                              .pauseFor(500)
+                              .start();
+                          }}
+                        />
+                      </span>
+                    </div>
                   </div>
+                  <div>Impian Anda</div>
                 </div>
               </div>
             </div>
 
             {/* Animated Subheading */}
-            <div className="text-lg sm:text-xl md:text-2xl text-primary-100 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed px-4 h-16 sm:h-20 flex items-center justify-center">
+            <div className="text-lg sm:text-lg md:text-2xl text-primary-100 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed px-4 h-16 sm:h-20 flex items-center justify-center">
               <Typewriter
                 options={{
                   strings: [
-                    "Cari magang atau cari jodoh? Why not both? 😉",
-                    "Your career love story starts here! 💕",
-                    "Bukan PDKT, tapi Professional Development & Karir Transformation! 💫",
+                    "Cari magang atau cari jodoh? Why not both? 💘", 
+                    "Your career love story starts here! 🌟", 
+                    "Bukan PDKT, tapi Professional Development & Karir Transformation! ⚡", 
                   ],
                   autoStart: true,
                   loop: true,
