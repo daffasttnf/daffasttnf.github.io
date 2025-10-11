@@ -65,16 +65,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const handleProgramStudiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFilters = { ...localFilters, programStudi: e.target.value };
     setLocalFilters(newFilters);
+    // Langsung panggil onFilterChange untuk reset pagination
+    onFilterChange(newFilters);
   };
 
   const handleJabatanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFilters = { ...localFilters, jabatan: e.target.value };
     setLocalFilters(newFilters);
+    // Langsung panggil onFilterChange untuk reset pagination
+    onFilterChange(newFilters);
   };
 
   const handleProvinsiChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newFilters = { ...localFilters, provinsi: e.target.value };
     setLocalFilters(newFilters);
+    // Langsung panggil onFilterChange untuk reset pagination
     onFilterChange(newFilters);
   };
 
@@ -84,24 +89,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
     onFilterChange(resetFilters);
   };
 
+  // Effect untuk sync localFilters dengan props filters (jika ada perubahan dari luar)
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (
-        localFilters.programStudi !== filters.programStudi ||
-        localFilters.jabatan !== filters.jabatan
-      ) {
-        onFilterChange(localFilters);
-      }
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [
-    localFilters.programStudi,
-    localFilters.jabatan,
-    filters.programStudi,
-    filters.jabatan,
-    onFilterChange,
-  ]);
+    setLocalFilters(filters);
+  }, [filters]);
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
@@ -339,8 +330,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
         </div>
       </div>
-
-     
     </div>
   );
 };

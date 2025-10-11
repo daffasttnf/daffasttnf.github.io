@@ -71,11 +71,11 @@ interface Stats {
 export const useJobs = () => {
   // Load state dari localStorage (lebih persisten) untuk data jobs
   const [allJobs, setAllJobs] = useState<Job[]>(() => {
-    const saved = localStorage.getItem('magang_allJobs');
+    const saved = localStorage.getItem("magang_allJobs");
     if (saved) {
       const parsed = JSON.parse(saved);
       // Cek apakah data masih fresh (kurang dari 5 menit)
-      const timestamp = localStorage.getItem('magang_data_timestamp');
+      const timestamp = localStorage.getItem("magang_data_timestamp");
       const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
       if (timestamp && parseInt(timestamp) > fiveMinutesAgo) {
         return parsed;
@@ -83,59 +83,64 @@ export const useJobs = () => {
     }
     return [];
   });
-  
+
   const [filteredJobs, setFilteredJobs] = useState<Job[]>(() => {
-    const saved = sessionStorage.getItem('magang_filteredJobs');
+    const saved = sessionStorage.getItem("magang_filteredJobs");
     return saved ? JSON.parse(saved) : [];
   });
-  
+
   const [loading, setLoading] = useState(!allJobs.length); // Hanya loading jika tidak ada data
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(() => {
-    const saved = sessionStorage.getItem('magang_currentPage');
+    const saved = sessionStorage.getItem("magang_currentPage");
     return saved ? parseInt(saved) : 1;
   });
-  
+
   const [itemsPerPage] = useState(21);
   const [fetchProgress, setFetchProgress] = useState<FetchProgress>({
     current: 0,
     total: 0,
-    isFetchingAll: false
+    isFetchingAll: false,
   });
-  
+
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
 
   const [filters, setFilters] = useState<Filters>(() => {
-    const saved = sessionStorage.getItem('magang_filters');
-    return saved ? JSON.parse(saved) : {
-      programStudi: '',
-      jabatan: '',
-      provinsi: '32'
-    };
+    const saved = sessionStorage.getItem("magang_filters");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          programStudi: "",
+          jabatan: "",
+          provinsi: "32",
+        };
   });
 
   // Save allJobs ke localStorage (lebih persisten)
   useEffect(() => {
     if (allJobs.length > 0) {
-      localStorage.setItem('magang_allJobs', JSON.stringify(allJobs));
-      localStorage.setItem('magang_data_timestamp', Date.now().toString());
+      localStorage.setItem("magang_allJobs", JSON.stringify(allJobs));
+      localStorage.setItem("magang_data_timestamp", Date.now().toString());
     }
   }, [allJobs]);
 
   // Save filteredJobs ke sessionStorage
   useEffect(() => {
     if (filteredJobs.length > 0) {
-      sessionStorage.setItem('magang_filteredJobs', JSON.stringify(filteredJobs));
+      sessionStorage.setItem(
+        "magang_filteredJobs",
+        JSON.stringify(filteredJobs)
+      );
     }
   }, [filteredJobs]);
 
   useEffect(() => {
-    sessionStorage.setItem('magang_currentPage', currentPage.toString());
+    sessionStorage.setItem("magang_currentPage", currentPage.toString());
   }, [currentPage]);
 
   useEffect(() => {
-    sessionStorage.setItem('magang_filters', JSON.stringify(filters));
+    sessionStorage.setItem("magang_filters", JSON.stringify(filters));
   }, [filters]);
 
   // Fungsi untuk fetch stats
@@ -145,12 +150,12 @@ export const useJobs = () => {
       const statsData = await fetchStats();
       setStats(statsData);
     } catch (err) {
-      console.error('Error fetching stats:', err);
+      console.error("Error fetching stats:", err);
       setStats({
         "Jumlah Lowongan": 1450,
         "Jumlah Pendaftar Magang": 157837,
         "Jumlah Perusahaan": 1003,
-        "Jumlah Peserta Magang": 0
+        "Jumlah Peserta Magang": 0,
       });
     } finally {
       setStatsLoading(false);
@@ -158,7 +163,7 @@ export const useJobs = () => {
   };
 
   // Fungsi untuk fetch semua data dari semua halaman
-  const fetchAllJobs = async (provinceCode = '32', forceRefresh = false) => {
+  const fetchAllJobs = async (provinceCode = "32", forceRefresh = false) => {
     // Jika data sudah ada dan tidak force refresh, skip fetching
     if (allJobs.length > 0 && !forceRefresh) {
       setLoading(false);
@@ -169,48 +174,59 @@ export const useJobs = () => {
       setFetchProgress({ current: 0, total: 0, isFetchingAll: true });
       setLoading(true);
       setError(null);
-      
+
       // Clear existing jobs when province changes
       if (forceRefresh) {
         setAllJobs([]);
         setFilteredJobs([]);
       }
-      
+
       const firstPageData = await fetchJobs(1, 20, provinceCode);
       const totalPages = firstPageData.meta.pagination.last_page;
-      
+
       setFetchProgress({ current: 1, total: totalPages, isFetchingAll: true });
-      
+
       let allJobsData: Job[] = [...firstPageData.data];
-      
+
       for (let page = 2; page <= totalPages; page++) {
         const pageData = await fetchJobs(page, 20, provinceCode);
         allJobsData = [...allJobsData, ...pageData.data];
-        setFetchProgress({ current: page, total: totalPages, isFetchingAll: true });
-        
-        await new Promise(resolve => setTimeout(resolve, 100));
+        setFetchProgress({
+          current: page,
+          total: totalPages,
+          isFetchingAll: true,
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
-      
+
       setAllJobs(allJobsData);
       applyFilters(allJobsData, filters);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
       setLoading(false);
       setFetchProgress({ current: 0, total: 0, isFetchingAll: false });
     }
   };
 
-  const applyFilters = (jobs: Job[] = allJobs, currentFilters: Filters = filters) => {
+  const applyFilters = (
+    jobs: Job[] = allJobs,
+    currentFilters: Filters = filters
+  ) => {
     let filtered = jobs;
 
     if (currentFilters.programStudi) {
-      filtered = filtered.filter(job => {
+      filtered = filtered.filter((job) => {
         try {
-          const programStudiList: ProgramStudi[] = JSON.parse(job.program_studi || '[]');
-          return programStudiList.some(ps => 
-            ps.title.toLowerCase().includes(currentFilters.programStudi.toLowerCase())
+          const programStudiList: ProgramStudi[] = JSON.parse(
+            job.program_studi || "[]"
+          );
+          return programStudiList.some((ps) =>
+            ps.title
+              .toLowerCase()
+              .includes(currentFilters.programStudi.toLowerCase())
           );
         } catch {
           return false;
@@ -219,19 +235,17 @@ export const useJobs = () => {
     }
 
     if (currentFilters.jabatan) {
-      filtered = filtered.filter(job => 
+      filtered = filtered.filter((job) =>
         job.posisi.toLowerCase().includes(currentFilters.jabatan.toLowerCase())
       );
     }
 
     setFilteredJobs(filtered);
-    // Reset ke halaman 1 setiap kali filter berubah
-    setCurrentPage(1);
   };
 
   // Fungsi yang sederhana - langsung return job tanpa async
   const getJobDetail = (id: string): Job | undefined => {
-    return allJobs.find(job => job.id_posisi === id);
+    return allJobs.find((job) => job.id_posisi === id);
   };
 
   // Fungsi untuk check apakah data sudah loaded
@@ -242,15 +256,15 @@ export const useJobs = () => {
   // Fungsi untuk clear semua cache dan reset state
   const clearAllCacheAndReset = () => {
     // Clear localStorage
-    localStorage.removeItem('magang_allJobs');
-    localStorage.removeItem('magang_data_timestamp');
+    localStorage.removeItem("magang_allJobs");
+    localStorage.removeItem("magang_data_timestamp");
     
     // Clear sessionStorage
-    sessionStorage.removeItem('magang_filteredJobs');
-    sessionStorage.removeItem('magang_currentPage');
-    sessionStorage.removeItem('magang_scrollPosition');
-    sessionStorage.removeItem('magang_previous_province');
-    sessionStorage.removeItem('magang_homepage_visited');
+    sessionStorage.removeItem("magang_filteredJobs");
+    sessionStorage.removeItem("magang_currentPage");
+    sessionStorage.removeItem("magang_scrollPosition");
+    sessionStorage.removeItem("magang_previous_province");
+    sessionStorage.removeItem("magang_homepage_visited");
     
     // Reset state
     setAllJobs([]);
@@ -258,13 +272,6 @@ export const useJobs = () => {
     setCurrentPage(1);
     
     console.log('🔄 All cache cleared and state reset');
-  };
-
-  // Fungsi untuk reset pagination saja
-  const resetPagination = () => {
-    setCurrentPage(1);
-    sessionStorage.setItem('magang_currentPage', '1');
-    console.log('🔄 Pagination reset to page 1');
   };
 
   // Load stats saat component mount (hanya sekali)
@@ -279,12 +286,11 @@ export const useJobs = () => {
     }
   }, []);
 
-  // Fetch data ketika provinsi berubah + CLEAR CACHE & RESET STATE
+  // Fetch data ketika provinsi berubah
   useEffect(() => {
-    const previousProvince = sessionStorage.getItem('magang_previous_province');
-    
+    const previousProvince = sessionStorage.getItem("magang_previous_province");
     if (previousProvince && previousProvince !== filters.provinsi) {
-      console.log('🔄 Province changed from', previousProvince, 'to', filters.provinsi);
+      console.log("🔄 Province changed from", previousProvince, "to", filters.provinsi);
       
       // CLEAR SEMUA CACHE DAN RESET STATE
       clearAllCacheAndReset();
@@ -293,32 +299,22 @@ export const useJobs = () => {
       fetchAllJobs(filters.provinsi, true);
     }
     
-    sessionStorage.setItem('magang_previous_province', filters.provinsi);
+    sessionStorage.setItem("magang_previous_province", filters.provinsi);
   }, [filters.provinsi]);
 
-  // Reset pagination ketika programStudi atau jabatan berubah
+  // Apply filters ketika programStudi atau jabatan berubah
   useEffect(() => {
     if (allJobs.length > 0) {
-      // Cek apakah filter programStudi atau jabatan berubah
-      const previousProgramStudi = sessionStorage.getItem('magang_previous_programStudi');
-      const previousJabatan = sessionStorage.getItem('magang_previous_jabatan');
-      
-      if (previousProgramStudi !== filters.programStudi || previousJabatan !== filters.jabatan) {
-        console.log('🔄 Filter changed - resetting pagination');
-        resetPagination();
-      }
-      
-      // Simpan state filter saat ini untuk pengecekan berikutnya
-      sessionStorage.setItem('magang_previous_programStudi', filters.programStudi);
-      sessionStorage.setItem('magang_previous_jabatan', filters.jabatan);
-      
-      // Apply filters
       applyFilters();
     }
   }, [allJobs, filters.programStudi, filters.jabatan]);
 
+  // SOLUSI NO 4: Reset pagination setiap kali filter berubah
   const updateFilters = (newFilters: Filters) => {
     setFilters(newFilters);
+    // Reset pagination ke 1 setiap kali filter berubah
+    setCurrentPage(1);
+    sessionStorage.setItem('magang_currentPage', '1');
   };
 
   const changePage = (page: number) => {
@@ -335,7 +331,7 @@ export const useJobs = () => {
     last_page: totalPages,
     total: filteredJobs.length,
     from: indexOfFirstItem + 1,
-    to: Math.min(indexOfLastItem, filteredJobs.length)
+    to: Math.min(indexOfLastItem, filteredJobs.length),
   };
 
   // Fungsi untuk clear stored data
@@ -364,6 +360,6 @@ export const useJobs = () => {
     isDataLoaded,
     refetch: () => fetchAllJobs(filters.provinsi, true),
     refreshData,
-    clearStoredData
+    clearStoredData,
   };
 };

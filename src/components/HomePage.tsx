@@ -21,6 +21,8 @@ const HomePage = () => {
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   const hasRestoredScroll = useRef(false);
+  const scrollRestoreAttempts = useRef(0);
+  const maxScrollRestoreAttempts = 3;
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -37,7 +39,7 @@ const HomePage = () => {
   const scrollToFilter = () => {
     const filterSection = document.getElementById("filter-section");
     if (filterSection) {
-      const headerHeight = 80; // Adjust sesuai tinggi header
+      const headerHeight = 80;
       const filterPosition = filterSection.offsetTop - headerHeight;
 
       window.scrollTo({
@@ -47,57 +49,85 @@ const HomePage = () => {
     }
   };
 
-  // Save scroll position saat scroll
+  // Save scroll position saat scroll - dengan throttle
   useEffect(() => {
+    let scrollTimeout: any;
+
     const handleScroll = () => {
-      sessionStorage.setItem(
-        "magang_scrollPosition",
-        window.scrollY.toString()
-      );
+      // Throttle scroll events
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      
+      scrollTimeout = setTimeout(() => {
+        const scrollY = window.scrollY;
+        sessionStorage.setItem("magang_scrollPosition", scrollY.toString());
+      }, 100);
     };
 
-    // Throttle scroll events untuk performance
-    let ticking = false;
-    const throttledScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", throttledScroll, { passive: true });
-
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", throttledScroll);
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
     };
   }, []);
 
-  // Restore scroll position saat component mount - hanya sekali
-  useEffect(() => {
-    if (!hasRestoredScroll.current) {
-      const savedScrollPosition = sessionStorage.getItem(
-        "magang_scrollPosition"
-      );
-      if (savedScrollPosition && !fetchProgress.isFetchingAll) {
-        // Tunggu sampai DOM selesai render
-        const timer = setTimeout(() => {
-          window.scrollTo(0, parseInt(savedScrollPosition));
-          hasRestoredScroll.current = true;
+  // Improved scroll restoration dengan retry mechanism
+  const restoreScrollPosition = () => {
+    const savedScrollPosition = sessionStorage.getItem("magang_scrollPosition");
+    
+    if (!savedScrollPosition || hasRestoredScroll.current) return;
+
+    const scrollY = parseInt(savedScrollPosition);
+    
+    if (scrollY > 0) {
+      console.log(`🔄 Attempting to restore scroll to: ${scrollY}px (Attempt ${scrollRestoreAttempts.current + 1})`);
+      
+      // Gunakan setTimeout untuk memastikan DOM sudah selesai render
+      setTimeout(() => {
+        window.scrollTo(0, scrollY);
+        
+        // Verifikasi apakah scroll berhasil
+        setTimeout(() => {
+          const currentScrollY = window.scrollY;
+          const isScrollRestored = Math.abs(currentScrollY - scrollY) < 50; // Tolerance 50px
+          
+          if (!isScrollRestored && scrollRestoreAttempts.current < maxScrollRestoreAttempts) {
+            scrollRestoreAttempts.current += 1;
+            console.log(`🔄 Scroll restoration failed, retrying... (${scrollRestoreAttempts.current}/${maxScrollRestoreAttempts})`);
+            restoreScrollPosition();
+          } else if (isScrollRestored) {
+            console.log('✅ Scroll position successfully restored');
+            hasRestoredScroll.current = true;
+          } else {
+            console.log('❌ Scroll restoration failed after max attempts');
+            hasRestoredScroll.current = true;
+          }
         }, 100);
+      }, 300);
+    }
+  };
+
+  // Restore scroll position dengan kondisi yang lebih robust
+  useEffect(() => {
+    if (!hasRestoredScroll.current && !fetchProgress.isFetchingAll && !loading) {
+      // Tunggu sampai jobs sudah loaded dan DOM stabil
+      if (jobs.length > 0 || pagination.total === 0) {
+        const timer = setTimeout(() => {
+          restoreScrollPosition();
+        }, 500); // Delay lebih lama untuk memastikan rendering selesai
 
         return () => clearTimeout(timer);
       }
     }
-  }, [fetchProgress.isFetchingAll]);
+  }, [fetchProgress.isFetchingAll, loading, jobs.length, pagination.total]);
 
-  // Cleanup scroll position saat unmount jika berpindah ke halaman lain
+  // Cleanup scroll position saat unmount
   useEffect(() => {
     return () => {
-      // Jangan hapus scroll position jika masih di homepage
-      // Scroll position akan dipertahankan untuk kembali ke homepage
+      // Hapus scroll position hanya jika berpindah ke halaman yang bukan homepage
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/') {
+        sessionStorage.removeItem("magang_scrollPosition");
+      }
     };
   }, []);
 
@@ -156,7 +186,8 @@ const HomePage = () => {
       <RunningMessage />
 
       {/* Header Section */}
-      <Header></Header>
+      <Header />
+
       <div className="container mx-auto px-4 py-8">
         <section id="filter-section">
           <FilterBar
@@ -166,6 +197,7 @@ const HomePage = () => {
             fetchProgress={fetchProgress}
           />
         </section>
+
         {/* Info Jumlah Lowongan */}
         {!fetchProgress.isFetchingAll && (
           <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-200">
@@ -312,7 +344,7 @@ const HomePage = () => {
               )}
             </div>
 
-            {/* Pagination - Mobile Friendly */}
+            {/* Pagination */}
             {pagination.last_page > 1 && !fetchProgress.isFetchingAll && (
               <div className="flex justify-center mt-12">
                 <nav className="flex flex-col sm:flex-row items-center gap-2 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-full max-w-md sm:max-w-none sm:w-auto">
@@ -345,7 +377,7 @@ const HomePage = () => {
                       Prev
                     </button>
 
-                    {/* Page Numbers - Mobile: hanya current page, Desktop: lebih banyak */}
+                    {/* Page Numbers */}
                     <div className="flex items-center space-x-1 overflow-x-auto max-w-[200px] sm:max-w-none">
                       {/* First Page */}
                       {pagination.current_page > 2 && (
@@ -443,7 +475,8 @@ const HomePage = () => {
           </>
         )}
       </div>
-      {/* Back to Filter Button - Kecil dan Responsive */}
+
+      {/* Scroll to Filter Button */}
       {showScrollTop && (
         <button
           onClick={scrollToFilter}
