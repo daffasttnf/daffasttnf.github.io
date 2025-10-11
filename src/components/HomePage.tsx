@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useJobs } from "../hooks/useJobs";
 import JobCard from "./JobCard";
 import FilterBar from "./FilterBar";
