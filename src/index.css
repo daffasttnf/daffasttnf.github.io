@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -12,7 +12,7 @@
   --color-primary-700: #0052a3;
   --color-primary-800: #003d7a;
   --color-primary-900: #003399;
-  
+
   --color-gray-50: #f9fafb;
   --color-gray-100: #f3f4f6;
   --color-gray-200: #e5e7eb;
@@ -24,45 +24,94 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
-  --font-sans: 'Inter', 'Open Sans', 'system-ui', 'sans-serif';
+  --font-sans: "Inter", "Open Sans", "system-ui", "sans-serif";
 }
-
 
 /* Custom utility classes untuk primary colors */
 @layer utilities {
-  .bg-primary-50 { background-color: var(--color-primary-50); }
-  .bg-primary-100 { background-color: var(--color-primary-100); }
-  .bg-primary-200 { background-color: var(--color-primary-200); }
-  .bg-primary-300 { background-color: var(--color-primary-300); }
-  .bg-primary-400 { background-color: var(--color-primary-400); }
-  .bg-primary-500 { background-color: var(--color-primary-500); }
-  .bg-primary-600 { background-color: var(--color-primary-600); }
-  .bg-primary-700 { background-color: var(--color-primary-700); }
-  .bg-primary-800 { background-color: var(--color-primary-800); }
-  .bg-primary-900 { background-color: var(--color-primary-900); }
-  
-  .text-primary-50 { color: var(--color-primary-50); }
-  .text-primary-100 { color: var(--color-primary-100); }
-  .text-primary-200 { color: var(--color-primary-200); }
-  .text-primary-300 { color: var(--color-primary-300); }
-  .text-primary-400 { color: var(--color-primary-400); }
-  .text-primary-500 { color: var(--color-primary-500); }
-  .text-primary-600 { color: var(--color-primary-600); }
-  .text-primary-700 { color: var(--color-primary-700); }
-  .text-primary-800 { color: var(--color-primary-800); }
-  .text-primary-900 { color: var(--color-primary-900); }
-  
-  .border-primary-200 { border-color: var(--color-primary-200); }
-  .border-primary-300 { border-color: var(--color-primary-300); }
-  .border-primary-900 { border-color: var(--color-primary-900); }
-  
-  .hover\:bg-primary-800:hover { background-color: var(--color-primary-800); }
-  .focus\:ring-primary-500:focus { --tw-ring-color: var(--color-primary-500); }
+  .bg-primary-50 {
+    background-color: var(--color-primary-50);
+  }
+  .bg-primary-100 {
+    background-color: var(--color-primary-100);
+  }
+  .bg-primary-200 {
+    background-color: var(--color-primary-200);
+  }
+  .bg-primary-300 {
+    background-color: var(--color-primary-300);
+  }
+  .bg-primary-400 {
+    background-color: var(--color-primary-400);
+  }
+  .bg-primary-500 {
+    background-color: var(--color-primary-500);
+  }
+  .bg-primary-600 {
+    background-color: var(--color-primary-600);
+  }
+  .bg-primary-700 {
+    background-color: var(--color-primary-700);
+  }
+  .bg-primary-800 {
+    background-color: var(--color-primary-800);
+  }
+  .bg-primary-900 {
+    background-color: var(--color-primary-900);
+  }
+
+  .text-primary-50 {
+    color: var(--color-primary-50);
+  }
+  .text-primary-100 {
+    color: var(--color-primary-100);
+  }
+  .text-primary-200 {
+    color: var(--color-primary-200);
+  }
+  .text-primary-300 {
+    color: var(--color-primary-300);
+  }
+  .text-primary-400 {
+    color: var(--color-primary-400);
+  }
+  .text-primary-500 {
+    color: var(--color-primary-500);
+  }
+  .text-primary-600 {
+    color: var(--color-primary-600);
+  }
+  .text-primary-700 {
+    color: var(--color-primary-700);
+  }
+  .text-primary-800 {
+    color: var(--color-primary-800);
+  }
+  .text-primary-900 {
+    color: var(--color-primary-900);
+  }
+
+  .border-primary-200 {
+    border-color: var(--color-primary-200);
+  }
+  .border-primary-300 {
+    border-color: var(--color-primary-300);
+  }
+  .border-primary-900 {
+    border-color: var(--color-primary-900);
+  }
+
+  .hover\:bg-primary-800:hover {
+    background-color: var(--color-primary-800);
+  }
+  .focus\:ring-primary-500:focus {
+    --tw-ring-color: var(--color-primary-500);
+  }
 }
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     scroll-behavior: smooth;
   }
 }
@@ -81,16 +130,16 @@
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  
+
   .btn-primary:hover {
     background-color: var(--color-primary-800);
   }
-  
+
   .btn-primary:focus {
     outline: 2px solid var(--color-primary-500);
     outline-offset: 2px;
   }
-  
+
   .btn-secondary {
     background-color: var(--color-gray-100);
     color: var(--color-gray-700);
@@ -104,16 +153,16 @@
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  
+
   .btn-secondary:hover {
     background-color: var(--color-gray-200);
   }
-  
+
   .btn-secondary:focus {
     outline: 2px solid var(--color-gray-500);
     outline-offset: 2px;
   }
-  
+
   .card {
     background-color: white;
     border-radius: 0.5rem;
@@ -121,7 +170,7 @@
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     transition: box-shadow 0.2s;
   }
-  
+
   .card:hover {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
@@ -129,8 +178,13 @@
 
 /* Custom animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .animate-float {

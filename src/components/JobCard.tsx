@@ -39,6 +39,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const remainingCount = programStudi.length - 2;
 
   const handleCardClick = () => {
+    sessionStorage.setItem('magang_scrollPosition', window.scrollY.toString());
     navigate(`/lowongan/${job.id_posisi}`);
   };
 

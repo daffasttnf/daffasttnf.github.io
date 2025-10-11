@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface FilterBarProps {
   filters: {
@@ -15,17 +15,51 @@ interface FilterBarProps {
   };
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, fetchProgress }) => {
+const FilterBar: React.FC<FilterBarProps> = ({
+  filters,
+  onFilterChange,
+  fetchProgress,
+}) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
   const provinces = [
-    { code: '32', name: 'JAWA BARAT' },
-    { code: '31', name: 'DKI JAKARTA' },
-    { code: '35', name: 'JAWA TIMUR' },
-    { code: '33', name: 'JAWA TENGAH' },
-    { code: '34', name: 'DI YOGYAKARTA' },
-    { code: '36', name: 'BANTEN' },
-    { code: '51', name: 'BALI' },
+    { code: "11", name: "ACEH" },
+    { code: "12", name: "SUMATERA UTARA" },
+    { code: "13", name: "SUMATERA BARAT" },
+    { code: "14", name: "RIAU" },
+    { code: "15", name: "JAMBI" },
+    { code: "16", name: "SUMATERA SELATAN" },
+    { code: "17", name: "BENGKULU" },
+    { code: "18", name: "LAMPUNG" },
+    { code: "19", name: "KEPULAUAN BANGKA BELITUNG" },
+    { code: "21", name: "KEPULAUAN RIAU" },
+    { code: "31", name: "DKI JAKARTA" },
+    { code: "32", name: "JAWA BARAT" },
+    { code: "33", name: "JAWA TENGAH" },
+    { code: "34", name: "DI YOGYAKARTA" },
+    { code: "35", name: "JAWA TIMUR" },
+    { code: "36", name: "BANTEN" },
+    { code: "51", name: "BALI" },
+    { code: "52", name: "NUSA TENGGARA BARAT" },
+    { code: "53", name: "NUSA TENGGARA TIMUR" },
+    { code: "61", name: "KALIMANTAN BARAT" },
+    { code: "62", name: "KALIMANTAN TENGAH" },
+    { code: "63", name: "KALIMANTAN SELATAN" },
+    { code: "64", name: "KALIMANTAN TIMUR" },
+    { code: "65", name: "KALIMANTAN UTARA" },
+    { code: "71", name: "SULAWESI UTARA" },
+    { code: "72", name: "SULAWESI TENGAH" },
+    { code: "73", name: "SULAWESI SELATAN" },
+    { code: "74", name: "SULAWESI TENGGARA" },
+    { code: "75", name: "GORONTALO" },
+    { code: "76", name: "SULAWESI BARAT" },
+    { code: "81", name: "MALUKU" },
+    { code: "82", name: "MALUKU UTARA" },
+    { code: "91", name: "PAPUA" },
+    { code: "92", name: "PAPUA BARAT" },
+    { code: "93", name: "PAPUA SELATAN" },
+    { code: "94", name: "PAPUA TENGAH" },
+    { code: "95", name: "PAPUA PEGUNUNGAN" },
   ];
 
   const handleProgramStudiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,20 +79,29 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, fetchPro
   };
 
   const handleReset = () => {
-    const resetFilters = { programStudi: '', jabatan: '', provinsi: '32' };
+    const resetFilters = { programStudi: "", jabatan: "", provinsi: "32" };
     setLocalFilters(resetFilters);
     onFilterChange(resetFilters);
   };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (localFilters.programStudi !== filters.programStudi || localFilters.jabatan !== filters.jabatan) {
+      if (
+        localFilters.programStudi !== filters.programStudi ||
+        localFilters.jabatan !== filters.jabatan
+      ) {
         onFilterChange(localFilters);
       }
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [localFilters.programStudi, localFilters.jabatan, filters.programStudi, filters.jabatan, onFilterChange]);
+  }, [
+    localFilters.programStudi,
+    localFilters.jabatan,
+    filters.programStudi,
+    filters.jabatan,
+    onFilterChange,
+  ]);
 
   return (
     <div className="card p-6 mb-6">
@@ -72,7 +115,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, fetchPro
           Reset Filter
         </button>
       </div>
-      
+
       {/* Progress Bar */}
       {fetchProgress.isFetchingAll && (
         <div className="mb-6 p-4 bg-primary-50 rounded border border-primary-200">
@@ -85,16 +128,18 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, fetchPro
             </span>
           </div>
           <div className="w-full bg-primary-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-primary-900 h-2 rounded-full transition-all duration-300"
-              style={{ 
-                width: `${(fetchProgress.current / fetchProgress.total) * 100}%` 
+              style={{
+                width: `${
+                  (fetchProgress.current / fetchProgress.total) * 100
+                }%`,
               }}
             ></div>
           </div>
         </div>
       )}
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
@@ -134,7 +179,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange, fetchPro
             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
             disabled={fetchProgress.isFetchingAll}
           >
-            {provinces.map(province => (
+            {provinces.map((province) => (
               <option key={province.code} value={province.code}>
                 {province.name}
               </option>
