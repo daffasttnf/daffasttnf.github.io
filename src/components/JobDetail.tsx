@@ -75,7 +75,6 @@ const JobDetail = () => {
   };
 
   const programStudi = parseJSON(job.program_studi);
-  const jenjang = parseJSON(job.jenjang);
   const duration = calculateDuration();
 
   return (

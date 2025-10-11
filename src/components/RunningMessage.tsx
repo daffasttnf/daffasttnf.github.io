@@ -44,24 +44,6 @@ const RunningMessage = () => {
           ))}
         </div>
       </div>
-
-      {/* CSS Animation Styles */}
-      <style jsx>{`
-        @keyframes marquee-infinite {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-        .animate-marquee-infinite {
-          animation: marquee-infinite 40s linear infinite;
-        }
-        .group:hover .animate-marquee-infinite {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 };
