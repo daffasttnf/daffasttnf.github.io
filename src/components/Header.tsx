@@ -8,13 +8,15 @@ const Header = () => {
   const { stats, statsLoading } = useJobs();
   const [isVisible, setIsVisible] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !hasAnimated) {
           setIsVisible(true);
+          setHasAnimated(true);
         }
       },
       { threshold: 0.1 }
@@ -25,7 +27,7 @@ const Header = () => {
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [hasAnimated]);
 
   // Text rotation untuk subheading
   const subheadings = [
@@ -90,7 +92,7 @@ const Header = () => {
   return (
     <header
       ref={headerRef}
-      className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-purple-900 text-white overflow-hidden min-h-screen h-screen flex items-center"
+      className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-purple-900 text-white overflow-hidden min-h-screen flex items-center py-8"
     >
       {/* Enhanced Animated Background */}
       <div className="absolute inset-0">
@@ -102,7 +104,6 @@ const Header = () => {
           className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-purple-500/10 to-cyan-400/10"
           animate={{
             opacity: [0.1, 0.2, 0.1],
-            backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
           }}
           transition={{
             duration: 8,
@@ -113,7 +114,7 @@ const Header = () => {
         
         {/* Moving Grid */}
         <div 
-          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"
           style={{
             animation: 'gridMove 20s linear infinite'
           }}
@@ -121,7 +122,7 @@ const Header = () => {
 
         {/* Animated Orbs */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-40 h-40 sm:w-64 sm:h-64 bg-amber-400/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -134,7 +135,7 @@ const Header = () => {
         />
         
         <motion.div
-          className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-purple-400/10 rounded-full blur-3xl"
+          className="absolute bottom-1/3 right-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-purple-400/10 rounded-full blur-3xl"
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.4, 0.2, 0.4],
@@ -148,7 +149,7 @@ const Header = () => {
         />
 
         {/* Floating Particles */}
-        {[...Array(12)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
             className={`absolute rounded-full ${
@@ -165,22 +166,22 @@ const Header = () => {
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              x: [0, (Math.random() - 0.5) * 20],
-              y: [0, (Math.random() - 0.5) * 20],
+              x: [0, (Math.random() - 0.5) * 15],
+              y: [0, (Math.random() - 0.5) * 15],
               opacity: [0, 0.4, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: 10 + Math.random() * 10,
+              duration: 8 + Math.random() * 8,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: Math.random() * 3,
             }}
           />
         ))}
 
         {/* Animated Waves */}
         <motion.div
-          className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/5 to-transparent"
+          className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white/5 to-transparent"
           animate={{
             opacity: [0.1, 0.15, 0.1],
           }}
@@ -193,27 +194,27 @@ const Header = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 relative z-10 w-full">
+      <div className="container mx-auto px-4 relative z-10 w-full py-8">
         <motion.div
-          className="max-w-6xl mx-auto"
+          className="max-w-4xl lg:max-w-6xl mx-auto"
           variants={containerVariants}
           initial="hidden"
-          animate="visible"
+          animate={isVisible ? "visible" : "hidden"}
         >
-          <div className="text-center mb-8">
+          <div className="text-center">
             {/* Animated Badge */}
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center bg-white/10 backdrop-blur-lg rounded-full px-5 py-2.5 mb-6 sm:mb-8 border border-white/20 shadow-lg"
+              className="inline-flex items-center bg-white/10 backdrop-blur-lg rounded-full px-4 py-2 mb-4 sm:mb-6 border border-white/20 shadow-lg"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <motion.span
-                className="w-2.5 h-2.5 bg-green-400 rounded-full mr-3"
-                animate={{ scale: [1, 1.5, 1] }}
+                className="w-2 h-2 bg-green-400 rounded-full mr-2"
+                animate={{ scale: [1, 1.3, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <span className="text-base font-medium text-white/90">
+              <span className="text-sm font-medium text-white/90">
                 {statsLoading
                   ? "✨ Memuat data..."
                   : `✨ ${
@@ -222,18 +223,18 @@ const Header = () => {
               </span>
             </motion.div>
 
-            {/* Main Heading - LARGER FOR MOBILE */}
+            {/* Main Heading - OPTIMIZED FOR ALL SCREENS */}
             <motion.div
               variants={itemVariants}
-              className="mb-8 sm:mb-10 md:mb-12"
+              className="mb-6 sm:mb-8"
             >
-              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight">
-                <div className="flex flex-col items-center space-y-4 sm:space-y-6">
+              <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                <div className="flex flex-col items-center space-y-3 sm:space-y-4">
                   {/* First Line: Temukan [Changing Word] */}
-                  <div className="flex items-baseline justify-center gap-3 sm:gap-4 px-4 flex-nowrap">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 px-2">
                     <motion.span
-                      className="whitespace-nowrap text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
-                      initial={{ opacity: 0, x: -15 }}
+                      className="whitespace-nowrap text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.5 }}
                     >
@@ -241,7 +242,7 @@ const Header = () => {
                     </motion.span>
                     
                     <motion.span
-                      className="min-w-[140px] sm:min-w-[180px] md:min-w-[200px] text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
+                      className="min-w-[120px] sm:min-w-[140px] md:min-w-[160px] text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl relative"
                       variants={floatingVariants}
                       animate="float"
                     >
@@ -279,8 +280,8 @@ const Header = () => {
                   
                   {/* Second Line: Impian Anda */}
                   <motion.div
-                    className="whitespace-nowrap text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
-                    initial={{ opacity: 0, x: 15 }}
+                    className="whitespace-nowrap text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.7 }}
                   >
@@ -293,26 +294,26 @@ const Header = () => {
             {/* Animated Subheading */}
             <motion.div
               variants={itemVariants}
-              className="text-xl sm:text-2xl md:text-3xl text-primary-100 mb-8 sm:mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed px-4 h-16 sm:h-20 md:h-24 flex items-center justify-center"
+              className="text-lg sm:text-xl md:text-2xl text-primary-100 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4 h-12 sm:h-16 flex items-center justify-center"
             >
               <AnimatePresence mode="wait">
                 <motion.span
                   key={currentTextIndex}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
+                  exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.4 }}
-                  className="text-center text-lg sm:text-xl md:text-2xl"
+                  className="text-center text-base sm:text-lg md:text-xl"
                 >
                   {subheadings[currentTextIndex]}
                 </motion.span>
               </AnimatePresence>
             </motion.div>
 
-            {/* Animated Stats - LARGER FOR MOBILE */}
+            {/* Animated Stats - OPTIMIZED FOR MOBILE */}
             <motion.div
               variants={containerVariants}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 max-w-4xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto mb-6 sm:mb-8 px-2"
             >
               {[
                 { 
@@ -343,23 +344,23 @@ const Header = () => {
                 <motion.div
                   key={stat.key}
                   variants={itemVariants}
-                  className="text-center bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 border border-white/10 hover:border-white/20 transition-all duration-500 group hover:scale-105 cursor-pointer relative overflow-hidden"
+                  className="text-center bg-white/5 backdrop-blur-lg rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/10 hover:border-white/20 transition-all duration-300 group hover:scale-105 cursor-pointer relative overflow-hidden"
                   whileHover={{ y: -2 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
                   {/* Hover Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                   
                   {/* Animated Border */}
-                  <div className={`absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}>
-                    <div className="absolute inset-[1px] rounded-xl sm:rounded-2xl bg-primary-900/90"></div>
+                  <div className={`absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                    <div className="absolute inset-[1px] rounded-lg sm:rounded-xl bg-primary-900/90"></div>
                   </div>
 
                   <div className="relative z-10">
-                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3">
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">
                       {statsLoading ? (
                         <motion.div
-                          className="inline-block w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 border-2 border-white/30 border-t-white rounded-full"
+                          className="inline-block w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full"
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         />
@@ -377,7 +378,7 @@ const Header = () => {
                         "0"
                       )}
                     </div>
-                    <div className="text-primary-100 text-sm sm:text-base font-medium">
+                    <div className="text-primary-100 text-xs sm:text-sm font-medium">
                       {stat.label}
                     </div>
                   </div>
@@ -385,10 +386,10 @@ const Header = () => {
               ))}
             </motion.div>
 
-            {/* CTA Button - LARGER FOR MOBILE */}
+            {/* CTA Button - OPTIMIZED FOR MOBILE */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center items-center px-4"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-2"
             >
               <motion.button
                 onClick={() =>
@@ -396,11 +397,11 @@ const Header = () => {
                     .getElementById("filter-section")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="relative bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-primary-900 px-8 py-4 sm:px-10 sm:py-5 rounded-xl font-bold text-lg sm:text-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-primary-900 transition-all duration-300 shadow-lg flex items-center w-full sm:w-auto justify-center overflow-hidden group"
+                className="relative bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-primary-900 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-primary-900 transition-all duration-300 shadow-lg flex items-center w-full sm:w-auto justify-center overflow-hidden group"
                 whileHover={{ 
-                  scale: 1.03,
+                  scale: 1.02,
                 }}
-                whileTap={{ scale: 0.97 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {/* Animated Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 group-hover:from-amber-500 group-hover:via-orange-600 group-hover:to-amber-600 transition-all duration-1000" />
@@ -418,7 +419,7 @@ const Header = () => {
                 />
 
                 <svg
-                  className="w-6 h-6 sm:w-7 sm:h-7 mr-3 relative z-10"
+                  className="w-5 h-5 sm:w-6 sm:h-6 mr-2 relative z-10"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
