@@ -233,4 +233,19 @@
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+
+  @keyframes gridMove {
+    0% {
+      transform: translateY(0) translateX(0);
+    }
+    100% {
+      transform: translateY(40px) translateX(40px);
+    }
+  }
+
+  /* Custom cursor styling for typewriter */
+  :global(.Typewriter__cursor) {
+    font-weight: 200;
+    margin-left: 2px;
+  }
 }

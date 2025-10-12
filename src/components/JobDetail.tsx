@@ -54,7 +54,11 @@ const JobDetail = () => {
           <h1 className="text-xl font-bold text-gray-900 mb-3">Lowongan Tidak Ditemukan</h1>
           <p className="text-gray-600 mb-6 text-sm">Lowongan yang Anda cari tidak ditemukan atau sudah tidak tersedia.</p>
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => {
+              // Set flag untuk restore scroll ketika kembali ke beranda
+              sessionStorage.setItem("magang_shouldRestoreScroll", 'true');
+              navigate('/');
+            }}
             className="w-full bg-gradient-to-r from-primary-900 to-purple-900 text-white py-3 px-4 rounded-xl font-semibold hover:from-primary-800 hover:to-purple-800 transition-all duration-200"
           >
             Kembali ke Beranda
@@ -101,10 +105,16 @@ const JobDetail = () => {
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
   };
 
+  // Fungsi untuk kembali ke beranda dengan restore scroll
+  const handleBackToHome = () => {
+    // Set flag untuk restore scroll position
+    sessionStorage.setItem("magang_shouldRestoreScroll", 'true');
+    navigate('/');
+  };
+
   const programStudi = parseJSON(job.program_studi);
   const jenjang = parseJSON(job.jenjang);
   const duration = calculateDuration();
-  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -112,7 +122,7 @@ const JobDetail = () => {
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <div className="container mx-auto px-4 py-3 max-w-4xl">
           <button 
-            onClick={() => navigate('/')}
+            onClick={handleBackToHome}
             className="flex items-center text-gray-700 hover:text-primary-900 transition-colors font-medium text-sm"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

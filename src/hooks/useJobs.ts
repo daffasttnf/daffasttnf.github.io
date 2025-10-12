@@ -344,6 +344,7 @@ export const useJobs = () => {
     clearAllCacheAndReset();
     fetchAllJobs(filters.provinsi, true);
   };
+  
 
   return {
     jobs: currentJobs,

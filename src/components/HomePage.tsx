@@ -21,11 +21,9 @@ const HomePage = () => {
   } = useJobs();
 
   const mainContentRef = useRef<HTMLDivElement>(null);
-  const hasRestoredScroll = useRef(false);
-  const scrollRestoreAttempts = useRef(0);
-  const maxScrollRestoreAttempts = 3;
-
+  const jobsGridRef = useRef<HTMLDivElement>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const lastPageRef = useRef(pagination.current_page);
 
   // Effect untuk show/hide scroll to top button
   useEffect(() => {
@@ -50,6 +48,32 @@ const HomePage = () => {
     }
   };
 
+  // Fungsi untuk scroll ke grid jobs (hanya jika diperlukan)
+  const scrollToJobsGrid = () => {
+    // Hanya scroll jika user sedang di bagian bawah halaman
+    const currentScrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Jika user sudah melihat bagian atas, tidak perlu scroll
+    if (currentScrollY < 300) {
+      return;
+    }
+
+    // Jika user sedang di bagian bawah halaman, scroll ke jobs grid
+    if (currentScrollY + windowHeight > documentHeight - 500) {
+      if (jobsGridRef.current) {
+        const headerHeight = 80;
+        const gridPosition = jobsGridRef.current.offsetTop - headerHeight;
+
+        window.scrollTo({
+          top: gridPosition,
+          behavior: "smooth"
+        });
+      }
+    }
+  };
+
   // Save scroll position saat scroll - dengan throttle
   useEffect(() => {
     let scrollTimeout: any;
@@ -57,7 +81,7 @@ const HomePage = () => {
     const handleScroll = () => {
       // Throttle scroll events
       if (scrollTimeout) clearTimeout(scrollTimeout);
-      
+
       scrollTimeout = setTimeout(() => {
         const scrollY = window.scrollY;
         sessionStorage.setItem("magang_scrollPosition", scrollY.toString());
@@ -71,66 +95,53 @@ const HomePage = () => {
     };
   }, []);
 
-  // Improved scroll restoration dengan retry mechanism
-  const restoreScrollPosition = () => {
-    const savedScrollPosition = sessionStorage.getItem("magang_scrollPosition");
-    
-    if (!savedScrollPosition || hasRestoredScroll.current) return;
-
-    const scrollY = parseInt(savedScrollPosition);
-    
-    if (scrollY > 0) {
-      console.log(`🔄 Attempting to restore scroll to: ${scrollY}px (Attempt ${scrollRestoreAttempts.current + 1})`);
-      
-      // Gunakan setTimeout untuk memastikan DOM sudah selesai render
-      setTimeout(() => {
-        window.scrollTo(0, scrollY);
-        
-        // Verifikasi apakah scroll berhasil
-        setTimeout(() => {
-          const currentScrollY = window.scrollY;
-          const isScrollRestored = Math.abs(currentScrollY - scrollY) < 50; // Tolerance 50px
-          
-          if (!isScrollRestored && scrollRestoreAttempts.current < maxScrollRestoreAttempts) {
-            scrollRestoreAttempts.current += 1;
-            console.log(`🔄 Scroll restoration failed, retrying... (${scrollRestoreAttempts.current}/${maxScrollRestoreAttempts})`);
-            restoreScrollPosition();
-          } else if (isScrollRestored) {
-            console.log('✅ Scroll position successfully restored');
-            hasRestoredScroll.current = true;
-          } else {
-            console.log('❌ Scroll restoration failed after max attempts');
-            hasRestoredScroll.current = true;
-          }
-        }, 100);
-      }, 300);
-    }
-  };
-
-  // Restore scroll position dengan kondisi yang lebih robust
+  // SIMPLE SCROLL RESTORATION - Solusi Paling Mudah
   useEffect(() => {
-    if (!hasRestoredScroll.current && !fetchProgress.isFetchingAll && !loading) {
-      // Tunggu sampai jobs sudah loaded dan DOM stabil
-      if (jobs.length > 0 || pagination.total === 0) {
+    // Hanya restore scroll jika jobs sudah loaded dan ada saved position
+    if (!loading && !fetchProgress.isFetchingAll && jobs.length > 0) {
+      const savedScrollPosition = sessionStorage.getItem(
+        "magang_scrollPosition"
+      );
+      const shouldRestoreScroll = sessionStorage.getItem(
+        "magang_shouldRestoreScroll"
+      );
+
+      // Hanya restore jika ada flag yang menandakan kita kembali dari detail page
+      if (savedScrollPosition && shouldRestoreScroll === "true") {
+        const scrollY = parseInt(savedScrollPosition);
+
         const timer = setTimeout(() => {
-          restoreScrollPosition();
-        }, 500); // Delay lebih lama untuk memastikan rendering selesai
+          window.scrollTo(0, scrollY);
+          console.log("🔄 Scroll position restored:", scrollY);
+
+          // Clear flag setelah restore
+          sessionStorage.setItem("magang_shouldRestoreScroll", "false");
+        }, 100);
 
         return () => clearTimeout(timer);
       }
     }
-  }, [fetchProgress.isFetchingAll, loading, jobs.length, pagination.total]);
+  }, [loading, fetchProgress.isFetchingAll, jobs.length]);
 
-  // Cleanup scroll position saat unmount
+  // Effect untuk scroll ke jobs grid hanya ketika benar-benar diperlukan
   useEffect(() => {
-    return () => {
-      // Hapus scroll position hanya jika berpindah ke halaman yang bukan homepage
-      const currentPath = window.location.pathname;
-      if (currentPath !== '/') {
-        sessionStorage.removeItem("magang_scrollPosition");
+    if (jobs.length > 0 && !loading && !fetchProgress.isFetchingAll) {
+      // Hanya scroll jika page berubah (bukan initial load)
+      if (lastPageRef.current !== pagination.current_page) {
+        const timer = setTimeout(() => {
+          scrollToJobsGrid();
+          lastPageRef.current = pagination.current_page;
+        }, 100);
+
+        return () => clearTimeout(timer);
       }
-    };
-  }, []);
+    }
+  }, [jobs, loading, fetchProgress.isFetchingAll, pagination.current_page]);
+
+  // Modified changePage handler
+  const handlePageChange = (page: number) => {
+    changePage(page);
+  };
 
   const handleFilterChange = (newFilters: any) => {
     updateFilters(newFilters);
@@ -315,8 +326,11 @@ const HomePage = () => {
           <Loading message="🔄 Memuat lowongan magang..." />
         ) : (
           <>
-            {/* Grid Layout 3 Kolom */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Grid Layout 3 Kolom - dengan ref untuk scroll */}
+            <div 
+              ref={jobsGridRef}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+            >
               {jobs.length > 0 ? (
                 jobs.map((job) => <JobCard key={job.id_posisi} job={job} />)
               ) : (
@@ -345,130 +359,145 @@ const HomePage = () => {
               )}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination - Compact Version */}
             {pagination.last_page > 1 && !fetchProgress.isFetchingAll && (
               <div className="flex justify-center mt-12">
-                <nav className="flex flex-col sm:flex-row items-center gap-2 bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-full max-w-md sm:max-w-none sm:w-auto">
-                  {/* Mobile: Info halaman */}
-                  <div className="sm:hidden text-sm text-gray-600 mb-2">
-                    Halaman {pagination.current_page} dari{" "}
-                    {pagination.last_page}
-                  </div>
+                <nav className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-full max-w-md">
+                  <div className="flex items-center justify-between gap-3">
+                    {/* Page Info & Input */}
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm text-gray-600 hidden sm:block">
+                        Hal.{" "}
+                        <span className="font-semibold">
+                          {pagination.current_page}
+                        </span>
+                        /
+                        <span className="font-semibold">
+                          {pagination.last_page}
+                        </span>
+                      </div>
 
-                  <div className="flex items-center space-x-1 w-full sm:w-auto justify-center">
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => changePage(pagination.current_page - 1)}
-                      disabled={pagination.current_page === 1}
-                      className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-1 sm:flex-none justify-center min-w-[80px]"
-                    >
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600 sm:hidden">
+                          Ke:
+                        </span>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min="1"
+                            max={pagination.last_page}
+                            defaultValue={pagination.current_page}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const page = Math.max(
+                                  1,
+                                  Math.min(
+                                    pagination.last_page,
+                                    parseInt(e.currentTarget.value) ||
+                                      pagination.current_page
+                                  )
+                                );
+                                handlePageChange(page);
+                                e.currentTarget.value = page.toString();
+                              }
+                            }}
+                            onBlur={(e) => {
+                              const page = Math.max(
+                                1,
+                                Math.min(
+                                  pagination.last_page,
+                                  parseInt(e.target.value) ||
+                                    pagination.current_page
+                                )
+                              );
+                              handlePageChange(page);
+                              e.target.value = page.toString();
+                            }}
+                            className="w-12 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-500 text-center"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handlePageChange(pagination.current_page - 1)}
+                        disabled={pagination.current_page === 1}
+                        className="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                        title="Sebelumnya"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                      Prev
-                    </button>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
 
-                    {/* Page Numbers */}
-                    <div className="flex items-center space-x-1 overflow-x-auto max-w-[200px] sm:max-w-none">
-                      {/* First Page */}
-                      {pagination.current_page > 2 && (
-                        <>
+                      {/* Page Numbers */}
+                      <div className="flex items-center gap-1 mx-2">
+                        {pagination.current_page > 1 && (
                           <button
-                            onClick={() => changePage(1)}
-                            className="px-3 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 transition-colors flex-shrink-0 hidden sm:block"
+                            onClick={() => handlePageChange(1)}
+                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors"
                           >
                             1
                           </button>
-                          {pagination.current_page > 3 && (
-                            <span className="px-1 text-gray-500 flex-shrink-0 hidden sm:block">
-                              ...
-                            </span>
-                          )}
-                        </>
-                      )}
+                        )}
 
-                      {/* Current Page & Surrounding */}
-                      {(() => {
-                        const pages = [];
-                        const startPage = Math.max(
-                          1,
-                          pagination.current_page - 1
-                        );
-                        const endPage = Math.min(
-                          pagination.last_page,
-                          pagination.current_page + 1
-                        );
+                        {pagination.current_page > 2 && (
+                          <span className="text-gray-400 text-xs">•</span>
+                        )}
 
-                        for (let page = startPage; page <= endPage; page++) {
-                          pages.push(
-                            <button
-                              key={page}
-                              onClick={() => changePage(page)}
-                              className={`px-3 py-2 text-sm font-medium border rounded-lg transition-colors flex-shrink-0 ${
-                                page === pagination.current_page
-                                  ? "text-white bg-primary-900 border-primary-900 shadow-md"
-                                  : "text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          );
-                        }
-                        return pages;
-                      })()}
+                        <button className="w-7 h-7 text-xs border border-primary-600 rounded text-white bg-primary-600 shadow-sm">
+                          {pagination.current_page}
+                        </button>
 
-                      {/* Last Page */}
-                      {pagination.current_page < pagination.last_page - 1 && (
-                        <>
-                          {pagination.current_page <
-                            pagination.last_page - 2 && (
-                            <span className="px-1 text-gray-500 flex-shrink-0 hidden sm:block">
-                              ...
-                            </span>
-                          )}
+                        {pagination.current_page < pagination.last_page - 1 && (
+                          <span className="text-gray-400 text-xs">•</span>
+                        )}
+
+                        {pagination.current_page < pagination.last_page && (
                           <button
-                            onClick={() => changePage(pagination.last_page)}
-                            className="px-3 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 transition-colors flex-shrink-0 hidden sm:block"
+                            onClick={() => handlePageChange(pagination.last_page)}
+                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors"
                           >
                             {pagination.last_page}
                           </button>
-                        </>
-                      )}
-                    </div>
+                        )}
+                      </div>
 
-                    {/* Next Button */}
-                    <button
-                      onClick={() => changePage(pagination.current_page + 1)}
-                      disabled={
-                        pagination.current_page === pagination.last_page
-                      }
-                      className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-1 sm:flex-none justify-center min-w-[80px]"
-                    >
-                      Next
-                      <svg
-                        className="w-4 h-4 ml-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                      <button
+                        onClick={() => handlePageChange(pagination.current_page + 1)}
+                        disabled={
+                          pagination.current_page === pagination.last_page
+                        }
+                        className="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                        title="Selanjutnya"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </nav>
               </div>
@@ -500,7 +529,7 @@ const HomePage = () => {
         </button>
       )}
 
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 };
