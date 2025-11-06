@@ -1,15 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import JobDetail from './components/JobDetail';
-import Maintenance from './components/Maintentance';
+import Timeline from './components/Timeline';
 
 function App() {
   // Set to true untuk mengaktifkan maintenance mode
   // Set to false untuk menonaktifkan maintenance mode
-  const UNDER_MAINTENANCE = true;
+  const UNDER_MAINTENANCE = false;
 
   if (UNDER_MAINTENANCE) {
-    return <Maintenance />;
+    return <Timeline />;
   }
 
   return (
