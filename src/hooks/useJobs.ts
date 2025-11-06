@@ -137,7 +137,7 @@ export const useJobs = () => {
   const [filters, setFilters] = useState<Filters>({
     programStudi: "",
     jabatan: "",
-    provinsi: "1",
+    provinsi: "11",
     kota: "",
     perusahaan: "",
   });
@@ -252,7 +252,7 @@ export const useJobs = () => {
   };
 
   // Fungsi untuk fetch semua data dari semua halaman
-  const fetchAllJobs = async (provinceCode = "1", forceRefresh = false) => {
+  const fetchAllJobs = async (provinceCode = "11", forceRefresh = false) => {
     try {
       setFetchProgress({ current: 0, total: 0, isFetchingAll: true });
       setLoading(true);
