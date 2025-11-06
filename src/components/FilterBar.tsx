@@ -41,7 +41,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = options.filter(option =>
+  const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -60,14 +60,17 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setSearchTerm("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -78,19 +81,26 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
         onClick={handleToggle}
         disabled={disabled}
         className={`w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-left flex items-center justify-between transition-colors ${
-          disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-900 hover:border-gray-400'
-        } ${value ? 'text-gray-900' : 'text-gray-500'}`}
+          disabled
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white text-gray-900 hover:border-gray-400"
+        } ${value ? "text-gray-900" : "text-gray-500"}`}
       >
-        <span className="truncate">
-          {value || placeholder}
-        </span>
-        <svg 
-          className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} 
-          fill="none" 
-          stroke="currentColor" 
+        <span className="truncate">{value || placeholder}</span>
+        <svg
+          className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
 
@@ -124,14 +134,26 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                   type="button"
                   onClick={() => handleSelect(option)}
                   className={`w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 ${
-                    value === option ? 'bg-blue-50 text-primary-900 font-medium' : 'text-gray-700'
+                    value === option
+                      ? "bg-blue-50 text-primary-900 font-medium"
+                      : "text-gray-700"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="truncate text-sm">{option}</span>
                     {value === option && (
-                      <svg className="w-4 h-4 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg
+                        className="w-4 h-4 text-primary-600 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     )}
                   </div>
@@ -179,14 +201,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const handleKotaChange = (value: string) => {
     onFilterChange({
       ...filters,
-      kota: value,
+      kota: value === "SEMUA KOTA" ? "" : value, // Jika "Semua" dipilih, set ke string kosong
+      perusahaan: "", // Reset perusahaan ketika kota berubah
     });
   };
-
   const handlePerusahaanChange = (value: string) => {
     onFilterChange({
       ...filters,
-      perusahaan: value,
+      perusahaan: value === "Semua Perusahaan" ? "" : value, // Jika "Semua" dipilih, set ke string kosong
     });
   };
 
@@ -195,8 +217,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
       programStudi: "",
       jabatan: "",
       provinsi: "1",
-      kota: "",
-      perusahaan: "",
+      kota: "", // Reset ke semua kota
+      perusahaan: "", // Reset ke semua perusahaan
     });
   };
 
@@ -209,32 +231,92 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
   // Data provinsi
   const provinsiOptions = [
-    "Aceh", "Sumatera Utara", "Sumatera Barat", "Riau", "Jambi", "Sumatera Selatan",
-    "Bengkulu", "Lampung", "Kepulauan Bangka Belitung", "Kepulauan Riau", "DKI Jakarta",
-    "Jawa Barat", "Jawa Tengah", "DI Yogyakarta", "Jawa Timur", "Banten", "Bali",
-    "Nusa Tenggara Barat", "Nusa Tenggara Timur", "Kalimantan Barat", "Kalimantan Tengah",
-    "Kalimantan Selatan", "Kalimantan Timur", "Kalimantan Utara", "Sulawesi Utara",
-    "Sulawesi Tengah", "Sulawesi Selatan", "Sulawesi Tenggara", "Gorontalo", "Sulawesi Barat",
-    "Maluku", "Maluku Utara", "Papua", "Papua Barat", "Papua Selatan", "Papua Tengah",
-    "Papua Pegunungan", "Papua Barat Daya"
+    "Aceh",
+    "Sumatera Utara",
+    "Sumatera Barat",
+    "Riau",
+    "Jambi",
+    "Sumatera Selatan",
+    "Bengkulu",
+    "Lampung",
+    "Kepulauan Bangka Belitung",
+    "Kepulauan Riau",
+    "DKI Jakarta",
+    "Jawa Barat",
+    "Jawa Tengah",
+    "DI Yogyakarta",
+    "Jawa Timur",
+    "Banten",
+    "Bali",
+    "Nusa Tenggara Barat",
+    "Nusa Tenggara Timur",
+    "Kalimantan Barat",
+    "Kalimantan Tengah",
+    "Kalimantan Selatan",
+    "Kalimantan Timur",
+    "Kalimantan Utara",
+    "Sulawesi Utara",
+    "Sulawesi Tengah",
+    "Sulawesi Selatan",
+    "Sulawesi Tenggara",
+    "Gorontalo",
+    "Sulawesi Barat",
+    "Maluku",
+    "Maluku Utara",
+    "Papua",
+    "Papua Barat",
+    "Papua Selatan",
+    "Papua Tengah",
+    "Papua Pegunungan",
+    "Papua Barat Daya",
   ];
 
   const provinsiValues: { [key: string]: string } = {
-    "Aceh": "11", "Sumatera Utara": "12", "Sumatera Barat": "13", "Riau": "14", 
-    "Jambi": "15", "Sumatera Selatan": "16", "Bengkulu": "17", "Lampung": "18",
-    "Kepulauan Bangka Belitung": "19", "Kepulauan Riau": "21", "DKI Jakarta": "31",
-    "Jawa Barat": "32", "Jawa Tengah": "33", "DI Yogyakarta": "34", "Jawa Timur": "35",
-    "Banten": "36", "Bali": "51", "Nusa Tenggara Barat": "52", "Nusa Tenggara Timur": "53",
-    "Kalimantan Barat": "61", "Kalimantan Tengah": "62", "Kalimantan Selatan": "63",
-    "Kalimantan Timur": "64", "Kalimantan Utara": "65", "Sulawesi Utara": "71",
-    "Sulawesi Tengah": "72", "Sulawesi Selatan": "73", "Sulawesi Tenggara": "74",
-    "Gorontalo": "75", "Sulawesi Barat": "76", "Maluku": "81", "Maluku Utara": "82",
-    "Papua": "91", "Papua Barat": "92", "Papua Selatan": "94", "Papua Tengah": "95",
-    "Papua Pegunungan": "96", "Papua Barat Daya": "97"
+    Aceh: "11",
+    "Sumatera Utara": "12",
+    "Sumatera Barat": "13",
+    Riau: "14",
+    Jambi: "15",
+    "Sumatera Selatan": "16",
+    Bengkulu: "17",
+    Lampung: "18",
+    "Kepulauan Bangka Belitung": "19",
+    "Kepulauan Riau": "21",
+    "DKI Jakarta": "31",
+    "Jawa Barat": "32",
+    "Jawa Tengah": "33",
+    "DI Yogyakarta": "34",
+    "Jawa Timur": "35",
+    Banten: "36",
+    Bali: "51",
+    "Nusa Tenggara Barat": "52",
+    "Nusa Tenggara Timur": "53",
+    "Kalimantan Barat": "61",
+    "Kalimantan Tengah": "62",
+    "Kalimantan Selatan": "63",
+    "Kalimantan Timur": "64",
+    "Kalimantan Utara": "65",
+    "Sulawesi Utara": "71",
+    "Sulawesi Tengah": "72",
+    "Sulawesi Selatan": "73",
+    "Sulawesi Tenggara": "74",
+    Gorontalo: "75",
+    "Sulawesi Barat": "76",
+    Maluku: "81",
+    "Maluku Utara": "82",
+    Papua: "91",
+    "Papua Barat": "92",
+    "Papua Selatan": "94",
+    "Papua Tengah": "95",
+    "Papua Pegunungan": "96",
+    "Papua Barat Daya": "97",
   };
 
   const getProvinsiName = (code: string) => {
-    return Object.keys(provinsiValues).find(key => provinsiValues[key] === code) || "Pilih Provinsi";
+    return (
+      Object.keys(provinsiValues).find((key) => provinsiValues[key] === code) ||
+      "Pilih Provinsi"
+    );
   };
 
   return (
@@ -310,12 +392,17 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Kota/Kabupaten
+            {availableCities.length > 0 && (
+              <span className="text-xs text-gray-500 ml-1">
+                ({availableCities.length} kota)
+              </span>
+            )}
           </label>
           <SearchableDropdown
             value={filters.kota}
             onChange={handleKotaChange}
-            options={availableCities}
-            placeholder="Semua Kota"
+            options={["SEMUA KOTA", ...availableCities]} // Tambahkan opsi "Semua"
+            placeholder="SEMUA KOTA"
             disabled={loading || availableCities.length === 0}
           />
           {availableCities.length === 0 && !loading && (
@@ -329,19 +416,37 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Perusahaan
+            {availableCompanies.length > 0 && (
+              <span className="text-xs text-gray-500 ml-1">
+                ({availableCompanies.length} perusahaan)
+              </span>
+            )}
           </label>
           <SearchableDropdown
             value={filters.perusahaan}
             onChange={handlePerusahaanChange}
-            options={availableCompanies}
+            options={["Semua Perusahaan", ...availableCompanies]} // Tambahkan opsi "Semua"
             placeholder="Semua Perusahaan"
-            disabled={loading || availableCompanies.length === 0}
+            disabled={
+              loading ||
+              availableCompanies.length === 0 ||
+              filters.provinsi === "1"
+            }
           />
-          {availableCompanies.length === 0 && !loading && (
+          {filters.provinsi === "1" && !loading && (
             <p className="text-xs text-gray-500 mt-1">
               Pilih provinsi terlebih dahulu
             </p>
           )}
+          {filters.provinsi !== "1" &&
+            availableCompanies.length === 0 &&
+            !loading && (
+              <p className="text-xs text-gray-500 mt-1">
+                {filters.kota
+                  ? `Tidak ada perusahaan di ${filters.kota}`
+                  : "Pilih kota untuk melihat perusahaan"}
+              </p>
+            )}
         </div>
       </div>
 
