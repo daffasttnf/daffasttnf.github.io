@@ -69,32 +69,11 @@ interface Stats {
 }
 
 export const useJobs = () => {
-  // Load state dari localStorage (lebih persisten) untuk data jobs
-  const [allJobs, setAllJobs] = useState<Job[]>(() => {
-    const saved = localStorage.getItem("magang_allJobs");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Cek apakah data masih fresh (kurang dari 5 menit)
-      const timestamp = localStorage.getItem("magang_data_timestamp");
-      const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-      if (timestamp && parseInt(timestamp) > fiveMinutesAgo) {
-        return parsed;
-      }
-    }
-    return [];
-  });
-
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>(() => {
-    const saved = sessionStorage.getItem("magang_filteredJobs");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [loading, setLoading] = useState(!allJobs.length); // Hanya loading jika tidak ada data
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(() => {
-    const saved = sessionStorage.getItem("magang_currentPage");
-    return saved ? parseInt(saved) : 1;
-  });
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [itemsPerPage] = useState(21);
   const [fetchProgress, setFetchProgress] = useState<FetchProgress>({
@@ -106,42 +85,13 @@ export const useJobs = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
 
-  const [filters, setFilters] = useState<Filters>(() => {
-    const saved = sessionStorage.getItem("magang_filters");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          programStudi: "",
-          jabatan: "",
-          provinsi: "32",
-        };
+  const [filters, setFilters] = useState<Filters>({
+    programStudi: "",
+    jabatan: "",
+    provinsi: "32",
   });
 
-  // Save allJobs ke localStorage (lebih persisten)
-  useEffect(() => {
-    if (allJobs.length > 0) {
-      localStorage.setItem("magang_allJobs", JSON.stringify(allJobs));
-      localStorage.setItem("magang_data_timestamp", Date.now().toString());
-    }
-  }, [allJobs]);
-
-  // Save filteredJobs ke sessionStorage
-  useEffect(() => {
-    if (filteredJobs.length > 0) {
-      sessionStorage.setItem(
-        "magang_filteredJobs",
-        JSON.stringify(filteredJobs)
-      );
-    }
-  }, [filteredJobs]);
-
-  useEffect(() => {
-    sessionStorage.setItem("magang_currentPage", currentPage.toString());
-  }, [currentPage]);
-
-  useEffect(() => {
-    sessionStorage.setItem("magang_filters", JSON.stringify(filters));
-  }, [filters]);
+  // HAPUS SEMUA: Tidak ada penyimpanan ke localStorage/sessionStorage untuk data besar
 
   // Fungsi untuk fetch stats
   const fetchAllStats = async () => {
@@ -164,18 +114,12 @@ export const useJobs = () => {
 
   // Fungsi untuk fetch semua data dari semua halaman
   const fetchAllJobs = async (provinceCode = "32", forceRefresh = false) => {
-    // Jika data sudah ada dan tidak force refresh, skip fetching
-    if (allJobs.length > 0 && !forceRefresh) {
-      setLoading(false);
-      return;
-    }
-
     try {
       setFetchProgress({ current: 0, total: 0, isFetchingAll: true });
       setLoading(true);
       setError(null);
 
-      // Clear existing jobs when province changes
+      // Clear existing jobs when province changes atau force refresh
       if (forceRefresh) {
         setAllJobs([]);
         setFilteredJobs([]);
@@ -253,25 +197,12 @@ export const useJobs = () => {
     return allJobs.length > 0;
   };
 
-  // Fungsi untuk clear semua cache dan reset state
-  const clearAllCacheAndReset = () => {
-    // Clear localStorage
-    localStorage.removeItem("magang_allJobs");
-    localStorage.removeItem("magang_data_timestamp");
-    
-    // Clear sessionStorage
-    sessionStorage.removeItem("magang_filteredJobs");
-    sessionStorage.removeItem("magang_currentPage");
-    sessionStorage.removeItem("magang_scrollPosition");
-    sessionStorage.removeItem("magang_previous_province");
-    sessionStorage.removeItem("magang_homepage_visited");
-    
-    // Reset state
+  // Fungsi untuk clear state (tidak perlu clear storage)
+  const clearStateAndReset = () => {
     setAllJobs([]);
     setFilteredJobs([]);
     setCurrentPage(1);
-    
-    console.log('🔄 All cache cleared and state reset');
+    console.log('🔄 State reset');
   };
 
   // Load stats saat component mount (hanya sekali)
@@ -279,27 +210,14 @@ export const useJobs = () => {
     fetchAllStats();
   }, []);
 
-  // Initial load - hanya fetch jika belum ada data
+  // Initial load - selalu fetch data baru
   useEffect(() => {
-    if (allJobs.length === 0) {
-      fetchAllJobs(filters.provinsi, false);
-    }
+    fetchAllJobs(filters.provinsi, false);
   }, []);
 
   // Fetch data ketika provinsi berubah
   useEffect(() => {
-    const previousProvince = sessionStorage.getItem("magang_previous_province");
-    if (previousProvince && previousProvince !== filters.provinsi) {
-      console.log("🔄 Province changed from", previousProvince, "to", filters.provinsi);
-      
-      // CLEAR SEMUA CACHE DAN RESET STATE
-      clearAllCacheAndReset();
-      
-      // Fetch data baru untuk provinsi yang dipilih
-      fetchAllJobs(filters.provinsi, true);
-    }
-    
-    sessionStorage.setItem("magang_previous_province", filters.provinsi);
+    fetchAllJobs(filters.provinsi, true);
   }, [filters.provinsi]);
 
   // Apply filters ketika programStudi atau jabatan berubah
@@ -309,12 +227,11 @@ export const useJobs = () => {
     }
   }, [allJobs, filters.programStudi, filters.jabatan]);
 
-  // SOLUSI NO 4: Reset pagination setiap kali filter berubah
+  // Reset pagination setiap kali filter berubah
   const updateFilters = (newFilters: Filters) => {
     setFilters(newFilters);
     // Reset pagination ke 1 setiap kali filter berubah
     setCurrentPage(1);
-    sessionStorage.setItem('magang_currentPage', '1');
   };
 
   const changePage = (page: number) => {
@@ -334,17 +251,11 @@ export const useJobs = () => {
     to: Math.min(indexOfLastItem, filteredJobs.length),
   };
 
-  // Fungsi untuk clear stored data
-  const clearStoredData = () => {
-    clearAllCacheAndReset();
-  };
-
   // Fungsi untuk manual refresh data
   const refreshData = () => {
-    clearAllCacheAndReset();
+    clearStateAndReset();
     fetchAllJobs(filters.provinsi, true);
   };
-  
 
   return {
     jobs: currentJobs,
@@ -361,6 +272,5 @@ export const useJobs = () => {
     isDataLoaded,
     refetch: () => fetchAllJobs(filters.provinsi, true),
     refreshData,
-    clearStoredData,
   };
 };

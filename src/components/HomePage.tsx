@@ -50,17 +50,14 @@ const HomePage = () => {
 
   // Fungsi untuk scroll ke grid jobs (hanya jika diperlukan)
   const scrollToJobsGrid = () => {
-    // Hanya scroll jika user sedang di bagian bawah halaman
     const currentScrollY = window.scrollY;
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
     
-    // Jika user sudah melihat bagian atas, tidak perlu scroll
     if (currentScrollY < 300) {
       return;
     }
 
-    // Jika user sedang di bagian bawah halaman, scroll ke jobs grid
     if (currentScrollY + windowHeight > documentHeight - 500) {
       if (jobsGridRef.current) {
         const headerHeight = 80;
@@ -74,17 +71,20 @@ const HomePage = () => {
     }
   };
 
-  // Save scroll position saat scroll - dengan throttle
+  // Save scroll position saat scroll - dengan throttle (DIPERTAHANKAN)
   useEffect(() => {
     let scrollTimeout: any;
 
     const handleScroll = () => {
-      // Throttle scroll events
       if (scrollTimeout) clearTimeout(scrollTimeout);
 
       scrollTimeout = setTimeout(() => {
         const scrollY = window.scrollY;
-        sessionStorage.setItem("magang_scrollPosition", scrollY.toString());
+        try {
+          sessionStorage.setItem("magang_scrollPosition", scrollY.toString());
+        } catch (e) {
+          console.warn("Gagal menyimpan scroll position:", e);
+        }
       }, 100);
     };
 
@@ -95,18 +95,12 @@ const HomePage = () => {
     };
   }, []);
 
-  // SIMPLE SCROLL RESTORATION - Solusi Paling Mudah
+  // SCROLL RESTORATION - DIPERTAHANKAN (hanya ini yang disimpan)
   useEffect(() => {
-    // Hanya restore scroll jika jobs sudah loaded dan ada saved position
     if (!loading && !fetchProgress.isFetchingAll && jobs.length > 0) {
-      const savedScrollPosition = sessionStorage.getItem(
-        "magang_scrollPosition"
-      );
-      const shouldRestoreScroll = sessionStorage.getItem(
-        "magang_shouldRestoreScroll"
-      );
+      const savedScrollPosition = sessionStorage.getItem("magang_scrollPosition");
+      const shouldRestoreScroll = sessionStorage.getItem("magang_shouldRestoreScroll");
 
-      // Hanya restore jika ada flag yang menandakan kita kembali dari detail page
       if (savedScrollPosition && shouldRestoreScroll === "true") {
         const scrollY = parseInt(savedScrollPosition);
 
@@ -115,7 +109,11 @@ const HomePage = () => {
           console.log("🔄 Scroll position restored:", scrollY);
 
           // Clear flag setelah restore
-          sessionStorage.setItem("magang_shouldRestoreScroll", "false");
+          try {
+            sessionStorage.setItem("magang_shouldRestoreScroll", "false");
+          } catch (e) {
+            console.warn("Gagal menyimpan scroll flag:", e);
+          }
         }, 100);
 
         return () => clearTimeout(timer);
@@ -126,7 +124,6 @@ const HomePage = () => {
   // Effect untuk scroll ke jobs grid hanya ketika benar-benar diperlukan
   useEffect(() => {
     if (jobs.length > 0 && !loading && !fetchProgress.isFetchingAll) {
-      // Hanya scroll jika page berubah (bukan initial load)
       if (lastPageRef.current !== pagination.current_page) {
         const timer = setTimeout(() => {
           scrollToJobsGrid();
@@ -138,7 +135,6 @@ const HomePage = () => {
     }
   }, [jobs, loading, fetchProgress.isFetchingAll, pagination.current_page]);
 
-  // Modified changePage handler
   const handlePageChange = (page: number) => {
     changePage(page);
   };
