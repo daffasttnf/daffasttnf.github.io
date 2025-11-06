@@ -1,7 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import JobDetail from './components/JobDetail';
-import Timeline from './components/Timeline';
 
 function App() {
   // Set to true untuk mengaktifkan maintenance mode
@@ -9,7 +8,8 @@ function App() {
   const UNDER_MAINTENANCE = false;
 
   if (UNDER_MAINTENANCE) {
-    return <Timeline />;
+    return 
+    // <Timeline />;
   }
 
   return (
