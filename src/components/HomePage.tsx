@@ -17,12 +17,12 @@ const HomePage = () => {
     pagination,
     filters,
     updateFilters,
-    availableCities, // Tambahkan ini
+    availableCities,
     changePage,
     fetchProgress,
-    availableCompanies, // Tambahkan ini
+    availableCompanies,
     refreshData,
-    allJobs, // Ambil semua jobs untuk export
+    allJobs,
   } = useJobs();
 
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ const HomePage = () => {
     }
   };
 
-  // Save scroll position saat scroll - dengan throttle (DIPERTAHANKAN)
+  // Save scroll position saat scroll - dengan throttle
   useEffect(() => {
     let scrollTimeout: any;
 
@@ -119,9 +119,9 @@ const HomePage = () => {
     };
   }, []);
 
-  // SCROLL RESTORATION - DIPERTAHANKAN (hanya ini yang disimpan)
+  // SCROLL RESTORATION
   useEffect(() => {
-    if (!loading && !fetchProgress.isFetchingAll && jobs.length > 0) {
+    if (jobs.length > 0) {
       const savedScrollPosition = sessionStorage.getItem(
         "magang_scrollPosition"
       );
@@ -147,11 +147,11 @@ const HomePage = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [loading, fetchProgress.isFetchingAll, jobs.length]);
+  }, [jobs.length]);
 
   // Effect untuk scroll ke jobs grid hanya ketika benar-benar diperlukan
   useEffect(() => {
-    if (jobs.length > 0 && !loading && !fetchProgress.isFetchingAll) {
+    if (jobs.length > 0) {
       if (lastPageRef.current !== pagination.current_page) {
         const timer = setTimeout(() => {
           scrollToJobsGrid();
@@ -161,7 +161,7 @@ const HomePage = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [jobs, loading, fetchProgress.isFetchingAll, pagination.current_page]);
+  }, [jobs, pagination.current_page]);
 
   const handlePageChange = (page: number) => {
     changePage(page);
@@ -240,136 +240,157 @@ const HomePage = () => {
             onFilterChange={handleFilterChange}
             loading={loading}
             fetchProgress={fetchProgress}
-            availableCities={availableCities} // Tambahkan prop ini
-            availableCompanies={availableCompanies} // Tambahkan ini
+            availableCities={availableCities}
+            availableCompanies={availableCompanies}
           />
         </section>
 
-        {/* Info Jumlah Lowongan */}
-        {!fetchProgress.isFetchingAll && (
-          <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-200">
-            {/* Main Info Row */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              {/* Results Info */}
+        {/* Info Jumlah Lowongan dengan Background Fetch Indicator */}
+        <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-200">
+          {/* Background Fetch Info */}
+          {fetchProgress.isBackgroundFetching && (
+            <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-gray-900 font-semibold text-sm sm:text-base">
-                    {pagination.from}-{pagination.to}
+                  <span className="text-green-700 text-sm font-medium">
+                    📥 Sedang mengambil data lengkap... 
+                  </span>
+                  <span className="text-green-600 text-sm">
+                    (Halaman {fetchProgress.current} dari {fetchProgress.total})
                   </span>
                 </div>
-                <div className="text-gray-600 text-sm sm:text-base">
-                  dari{" "}
-                  <span className="font-semibold text-primary-900">
-                    {pagination.total}
-                  </span>{" "}
-                  lowongan
+                <div className="text-green-600 text-xs">
+                  Data akan terus bertambah
                 </div>
               </div>
-
-              {/* Page Info - Hidden on mobile when filters active */}
-              {pagination.total > 0 && (
-                <div
-                  className={`flex items-center bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg text-sm font-medium ${
-                    getActiveFiltersText() ? "hidden sm:flex" : "flex"
-                  }`}
-                >
-                  <svg
-                    className="w-4 h-4 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Halaman {pagination.current_page}/{pagination.last_page}
-                </div>
-              )}
             </div>
-            {/* Active Filters - Compact */}
-            {getActiveFiltersText() && (
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <div className="flex items-center text-primary-700 text-sm font-medium">
-                    <svg
-                      className="w-4 h-4 mr-1.5 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"
-                      />
-                    </svg>
-                    Filter:
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {filters.programStudi && (
-                      <span className="bg-blue-100 text-blue-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-blue-200">
-                        🎓 {filters.programStudi}
-                      </span>
-                    )}
-                    {filters.jabatan && (
-                      <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-green-200">
-                        💼 {filters.jabatan}
-                      </span>
-                    )}
-                    {filters.kota && (
-                      <span className="bg-purple-100 text-purple-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-purple-200">
-                        🏙️ {filters.kota}
-                      </span>
-                    )}
-                    {filters.perusahaan && (
-                      <span className="bg-orange-100 text-orange-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-orange-200">
-                        🏢 {filters.perusahaan}
-                      </span>
-                    )}
-                  </div>
-                </div>
+          )}
+
+          {/* Main Info Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            {/* Results Info */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-gray-900 font-semibold text-sm sm:text-base">
+                  {pagination.from}-{pagination.to}
+                </span>
               </div>
-            )}
-            {/* Mobile Page Info - Only show when filters active */}
-            {pagination.total > 0 && getActiveFiltersText() && (
-              <div className="mt-3 pt-3 border-t border-gray-200 sm:hidden">
-                <div className="flex items-center justify-center bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg text-sm font-medium w-fit mx-auto">
-                  <svg
-                    className="w-4 h-4 mr-1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Halaman {pagination.current_page}/{pagination.last_page}
-                </div>
+              <div className="text-gray-600 text-sm sm:text-base">
+                dari{" "}
+                <span className="font-semibold text-primary-900">
+                  {pagination.total}
+                </span>{" "}
+                lowongan
+                {fetchProgress.isBackgroundFetching && (
+                  <span className="text-green-600 text-xs ml-2">
+                    • Data masih bertambah
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Page Info - Hidden on mobile when filters active */}
+            {pagination.total > 0 && (
+              <div
+                className={`flex items-center bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg text-sm font-medium ${
+                  getActiveFiltersText() ? "hidden sm:flex" : "flex"
+                }`}
+              >
+                <svg
+                  className="w-4 h-4 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Halaman {pagination.current_page}/{pagination.last_page}
               </div>
             )}
           </div>
-        )}
 
-        {/* Loading State */}
-        {fetchProgress.isFetchingAll ? (
-          <Loading
-            message={`📥 Mengambil data halaman ${fetchProgress.current} dari ${fetchProgress.total}...`}
-          />
-        ) : loading ? (
-          <Loading message="🔄 Memuat lowongan magang..." />
+          {/* Active Filters - Compact */}
+          {getActiveFiltersText() && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex items-center text-primary-700 text-sm font-medium">
+                  <svg
+                    className="w-4 h-4 mr-1.5 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"
+                    />
+                  </svg>
+                  Filter:
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {filters.programStudi && (
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-blue-200">
+                      🎓 {filters.programStudi}
+                    </span>
+                  )}
+                  {filters.jabatan && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-green-200">
+                      💼 {filters.jabatan}
+                    </span>
+                  )}
+                  {filters.kota && (
+                    <span className="bg-purple-100 text-purple-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-purple-200">
+                      🏙️ {filters.kota}
+                    </span>
+                  )}
+                  {filters.perusahaan && (
+                    <span className="bg-orange-100 text-orange-800 text-xs px-2.5 py-1.5 rounded-lg font-medium border border-orange-200">
+                      🏢 {filters.perusahaan}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Page Info - Only show when filters active */}
+          {pagination.total > 0 && getActiveFiltersText() && (
+            <div className="mt-3 pt-3 border-t border-gray-200 sm:hidden">
+              <div className="flex items-center justify-center bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg text-sm font-medium w-fit mx-auto">
+                <svg
+                  className="w-4 h-4 mr-1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                Halaman {pagination.current_page}/{pagination.last_page}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Loading State - HANYA tampil jika benar-benar belum ada data sama sekali */}
+        {loading && allJobs.length === 0 ? (
+          <Loading message="🔄 Memuat data lowongan..." />
         ) : (
           <>
-            {/* Grid Layout 3 Kolom - dengan ref untuk scroll */}
+            {/* Grid Layout 3 Kolom - TAMPILKAN data yang sudah terload */}
             <div
               ref={jobsGridRef}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
@@ -391,9 +412,9 @@ const HomePage = () => {
                       updateFilters({
                         programStudi: "",
                         jabatan: "",
-                        provinsi: "11",
+                        provinsi: filters.provinsi,
                         kota: "",
-                        perusahaan: ""
+                        perusahaan: "",
                       })
                     }
                     className="btn-primary"
@@ -404,8 +425,28 @@ const HomePage = () => {
               )}
             </div>
 
-            {/* Pagination - Compact Version */}
-            {pagination.last_page > 1 && !fetchProgress.isFetchingAll && (
+            {/* Background Fetch Progress Indicator */}
+            {fetchProgress.isBackgroundFetching && jobs.length > 0 && (
+              <div className="flex justify-center my-6">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center max-w-md w-full">
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                    <div>
+                      <p className="text-green-700 text-sm font-medium">
+                        Mengambil data tambahan...
+                      </p>
+                      <p className="text-green-600 text-xs">
+                        Halaman {fetchProgress.current} dari {fetchProgress.total}
+                        {allJobs.length > 0 && ` • ${allJobs.length} data sudah terload`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* PAGINATION - SELALU TAMPILKAN jika ada data, TIDAK PERLU loading check */}
+            {pagination.last_page > 1 && (
               <div className="flex justify-center mt-12">
                 <nav className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 w-full max-w-md">
                   <div className="flex items-center justify-between gap-3">
@@ -459,19 +500,24 @@ const HomePage = () => {
                               e.target.value = page.toString();
                             }}
                             className="w-12 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-500 text-center"
+                            // TIDAK ADA disabled state di sini
                           />
                         </div>
                       </div>
                     </div>
 
-                    {/* Navigation */}
+                    {/* Navigation - TIDAK ADA disabled state */}
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() =>
                           handlePageChange(pagination.current_page - 1)
                         }
                         disabled={pagination.current_page === 1}
-                        className="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                        className={`p-2 text-gray-600 bg-white border border-gray-300 rounded-lg transition-colors ${
+                          pagination.current_page === 1 
+                            ? "opacity-40 cursor-not-allowed" 
+                            : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
+                        }`}
                         title="Sebelumnya"
                       >
                         <svg
@@ -494,7 +540,7 @@ const HomePage = () => {
                         {pagination.current_page > 1 && (
                           <button
                             onClick={() => handlePageChange(1)}
-                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors"
+                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
                           >
                             1
                           </button>
@@ -504,7 +550,7 @@ const HomePage = () => {
                           <span className="text-gray-400 text-xs">•</span>
                         )}
 
-                        <button className="w-7 h-7 text-xs border border-primary-600 rounded text-white bg-primary-600 shadow-sm">
+                        <button className="w-7 h-7 text-xs border border-primary-600 rounded text-white bg-primary-600 shadow-sm cursor-default">
                           {pagination.current_page}
                         </button>
 
@@ -517,7 +563,7 @@ const HomePage = () => {
                             onClick={() =>
                               handlePageChange(pagination.last_page)
                             }
-                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors"
+                            className="w-7 h-7 text-xs border border-gray-300 rounded text-gray-600 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
                           >
                             {pagination.last_page}
                           </button>
@@ -528,10 +574,12 @@ const HomePage = () => {
                         onClick={() =>
                           handlePageChange(pagination.current_page + 1)
                         }
-                        disabled={
+                        disabled={pagination.current_page === pagination.last_page}
+                        className={`p-2 text-gray-600 bg-white border border-gray-300 rounded-lg transition-colors ${
                           pagination.current_page === pagination.last_page
-                        }
-                        className="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                            ? "opacity-40 cursor-not-allowed" 
+                            : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
+                        }`}
                         title="Selanjutnya"
                       >
                         <svg
@@ -561,7 +609,7 @@ const HomePage = () => {
       {showScrollTop && (
         <button
           onClick={scrollToFilter}
-          className="fixed bottom-4 right-4 z-40 bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-full shadow-lg border border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 hover:scale-105 active:scale-95"
+          className="fixed bottom-4 right-4 z-40 bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-full shadow-lg border border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
           aria-label="Scroll ke filter"
         >
           <svg

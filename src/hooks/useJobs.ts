@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchJobs } from "../services/api";
 import { fetchStats } from "../services/statsApi";
 
@@ -61,6 +61,7 @@ interface FetchProgress {
   current: number;
   total: number;
   isFetchingAll: boolean;
+  isBackgroundFetching?: boolean; // NEW
 }
 
 interface Stats {
@@ -125,10 +126,13 @@ export const useJobs = () => {
   const [availableCompanies, setAvailableCompanies] = useState<string[]>([]);
 
   const [itemsPerPage] = useState(21);
+  
+  // NEW: State untuk background fetching
   const [fetchProgress, setFetchProgress] = useState<FetchProgress>({
     current: 0,
     total: 0,
     isFetchingAll: false,
+    isBackgroundFetching: false,
   });
 
   const [stats, setStats] = useState<Stats | null>(null);
@@ -141,6 +145,18 @@ export const useJobs = () => {
     kota: "",
     perusahaan: "",
   });
+
+  // NEW: Ref untuk cancel fetch
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Fungsi untuk cancel fetch yang sedang berjalan
+  const cancelCurrentFetch = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      console.log("🛑 Fetch dibatalkan");
+    }
+  };
 
   // Fungsi untuk extract kota-kota unik berdasarkan provinsi yang dipilih
   const extractCitiesFromJobs = (
@@ -251,51 +267,90 @@ export const useJobs = () => {
     }
   };
 
-  // Fungsi untuk fetch semua data dari semua halaman
-  const fetchAllJobs = async (provinceCode = "11", forceRefresh = false) => {
-    try {
-      setFetchProgress({ current: 0, total: 0, isFetchingAll: true });
-      setLoading(true);
-      setError(null);
+  // NEW: Fungsi untuk fetch semua data di background
+  const fetchAllJobsInBackground = async (provinceCode: string = "11") => {
+    cancelCurrentFetch(); // Cancel fetch sebelumnya
+    
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
-      // Clear existing jobs when province changes atau force refresh
-      if (forceRefresh) {
-        setAllJobs([]);
-        setFilteredJobs([]);
-        setAvailableCities([]);
-        setAvailableCompanies([]);
+    try {
+      setFetchProgress(prev => ({ 
+        ...prev, 
+        isBackgroundFetching: true,
+        isFetchingAll: true 
+      }));
+      
+      // Set loading hanya untuk initial, tidak blocking
+      if (allJobs.length === 0) {
+        setLoading(true);
       }
 
       const firstPageData = await fetchJobs(1, 20, provinceCode);
       const totalPages = firstPageData.meta.pagination.last_page;
 
-      setFetchProgress({ current: 1, total: totalPages, isFetchingAll: true });
+      // Check jika fetch dibatalkan
+      if (abortController.signal.aborted) return;
+
+      // Set data halaman pertama langsung
+      setAllJobs(firstPageData.data);
+      setFetchProgress({ 
+        current: 1, 
+        total: totalPages, 
+        isFetchingAll: true,
+        isBackgroundFetching: true 
+      });
 
       let allJobsData: Job[] = [...firstPageData.data];
 
+      // Fetch halaman berikutnya di background
       for (let page = 2; page <= totalPages; page++) {
+        // Check jika fetch dibatalkan sebelum setiap request
+        if (abortController.signal.aborted) return;
+
         const pageData = await fetchJobs(page, 20, provinceCode);
+        
+        // Check jika fetch dibatalkan setelah request
+        if (abortController.signal.aborted) return;
+
         allJobsData = [...allJobsData, ...pageData.data];
+        
+        // Update state dengan data baru
+        setAllJobs(allJobsData);
         setFetchProgress({
           current: page,
           total: totalPages,
           isFetchingAll: true,
+          isBackgroundFetching: true
         });
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Small delay untuk tidak overload server
+        await new Promise((resolve) => setTimeout(resolve, 50));
       }
 
-      setAllJobs(allJobsData);
-      applyFilters(allJobsData, filters);
       setError(null);
-    } catch (err) {
+      console.log(`✅ Data provinsi ${getProvinsiName(provinceCode)} selesai di-load: ${allJobsData.length} lowongan`);
+      
+    } catch (err: any) {
+      // AbortError adalah expected behavior ketika cancel
+      if (err.name === 'AbortError') {
+        console.log('Fetch dibatalkan untuk provinsi baru');
+        return;
+      }
+      
       setError(err instanceof Error ? err.message : "Terjadi kesalahan");
-
-      // Fallback: coba load data dari cache/local storage jika ada
       console.error("Error fetching jobs:", err);
     } finally {
-      setLoading(false);
-      setFetchProgress({ current: 0, total: 0, isFetchingAll: false });
+      if (!abortController.signal.aborted) {
+        setFetchProgress({ 
+          current: 0, 
+          total: 0, 
+          isFetchingAll: false,
+          isBackgroundFetching: false 
+        });
+        setLoading(false);
+      }
+      abortControllerRef.current = null;
     }
   };
 
@@ -363,6 +418,7 @@ export const useJobs = () => {
 
   // Fungsi untuk clear state
   const clearStateAndReset = () => {
+    cancelCurrentFetch();
     setAllJobs([]);
     setFilteredJobs([]);
     setCurrentPage(1);
@@ -376,14 +432,14 @@ export const useJobs = () => {
     fetchAllStats();
   }, []);
 
-  // Initial load - selalu fetch data baru
+  // Initial load dengan background fetching
   useEffect(() => {
-    fetchAllJobs(filters.provinsi, false);
+    fetchAllJobsInBackground(filters.provinsi);
   }, []);
 
-  // Fetch data ketika provinsi berubah
+  // Fetch data ketika provinsi berubah (dengan cancel previous)
   useEffect(() => {
-    fetchAllJobs(filters.provinsi, true);
+    fetchAllJobsInBackground(filters.provinsi);
   }, [filters.provinsi]);
 
   // Apply filters ketika filter berubah
@@ -426,12 +482,19 @@ export const useJobs = () => {
   // Fungsi untuk manual refresh data
   const refreshData = () => {
     clearStateAndReset();
-    fetchAllJobs(filters.provinsi, true);
+    fetchAllJobsInBackground(filters.provinsi);
   };
+
+  // Cleanup pada unmount
+  useEffect(() => {
+    return () => {
+      cancelCurrentFetch();
+    };
+  }, []);
 
   return {
     jobs: currentJobs,
-    loading,
+    loading: loading && allJobs.length === 0, // Hanya loading jika belum ada data sama sekali
     error,
     pagination,
     filters,
@@ -445,7 +508,7 @@ export const useJobs = () => {
     getJobDetail,
     isDataLoaded,
     allJobs,
-    refetch: () => fetchAllJobs(filters.provinsi, true),
+    refetch: () => fetchAllJobsInBackground(filters.provinsi),
     refreshData,
   };
 };

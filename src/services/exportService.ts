@@ -150,6 +150,9 @@ export class ExportService {
         jenjang = job.jenjang || '';
       }
 
+      // Generate link lowongan
+      const jobLink = `https://maganghub.kemnaker.go.id/lowongan/view/${job.id_posisi}`;
+
       return {
         'ID Posisi': job.id_posisi,
         'Posisi': job.posisi,
@@ -165,7 +168,8 @@ export class ExportService {
         'Tanggal Mulai': job.jadwal.tanggal_mulai ? new Date(job.jadwal.tanggal_mulai).toLocaleDateString('id-ID') : '',
         'Tanggal Selesai': job.jadwal.tanggal_selesai ? new Date(job.jadwal.tanggal_selesai).toLocaleDateString('id-ID') : '',
         'Batas Pendaftaran': job.jadwal.tanggal_batas_pendaftaran ? new Date(job.jadwal.tanggal_batas_pendaftaran).toLocaleDateString('id-ID') : '',
-        'Deskripsi Pekerjaan': job.deskripsi_posisi || ''
+        'Deskripsi Pekerjaan': job.deskripsi_posisi || '',
+        'Link Lowongan': jobLink // Kolom baru untuk link lowongan
       };
     });
   }
@@ -176,7 +180,7 @@ export class ExportService {
     const workbook = utils.book_new();
     utils.book_append_sheet(workbook, worksheet, 'Lowongan Magang');
 
-    // Set column widths
+    // Set column widths (ditambah kolom untuk Link Lowongan)
     const colWidths = [
       { wch: 20 }, // ID Posisi
       { wch: 30 }, // Posisi
@@ -192,9 +196,23 @@ export class ExportService {
       { wch: 12 }, // Mulai
       { wch: 12 }, // Selesai
       { wch: 15 }, // Batas Daftar
-      { wch: 50 }  // Deskripsi
+      { wch: 50 }, // Deskripsi
+      { wch: 60 }  // Link Lowongan (kolom baru)
     ];
     worksheet['!cols'] = colWidths;
+
+    // Tambahkan hyperlink untuk kolom Link Lowongan
+    const range = utils.decode_range(worksheet['!ref'] || 'A1');
+    for (let row = range.s.r + 1; row <= range.e.r; row++) {
+      const linkCell = utils.encode_cell({ r: row, c: 15 }); // Kolom P (index 15)
+      if (worksheet[linkCell]) {
+        worksheet[linkCell].l = { Target: worksheet[linkCell].v };
+        worksheet[linkCell].s = {
+          font: { color: { rgb: '0563C1' }, underline: true },
+          fill: { fgColor: { rgb: 'FFFFFF' } }
+        };
+      }
+    }
 
     const excelBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
     return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -261,6 +279,11 @@ export class ExportService {
 
       transaction.onerror = () => reject(transaction.error);
     });
+  }
+
+  // Method untuk mendapatkan link lowongan individual
+  getJobLink(jobId: string | number): string {
+    return `https://maganghub.kemnaker.go.id/lowongan/view/${jobId}`;
   }
 }
 
