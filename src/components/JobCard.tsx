@@ -9,14 +9,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const navigate = useNavigate();
   const [showProgramStudiModal, setShowProgramStudiModal] = useState(false);
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
 
   const parseJSON = (data: string) => {
     try {

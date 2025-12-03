@@ -45,16 +45,6 @@ const Header = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + "Jt";
-    }
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "Rb";
-    }
-    return num.toString();
-  };
-
   // Variants untuk animasi dengan tipe yang spesifik
   const containerVariants = {
     hidden: { opacity: 0 },
