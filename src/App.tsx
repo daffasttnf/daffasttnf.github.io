@@ -1,22 +1,15 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import JobDetail from './components/JobDetail';
+import SavedJobsPage from './components/SavedJobsPage';
 
 function App() {
-  // Set to true untuk mengaktifkan maintenance mode
-  // Set to false untuk menonaktifkan maintenance mode
-  const UNDER_MAINTENANCE = false;
-
-  if (UNDER_MAINTENANCE) {
-    return
-    // <Timeline />;
-  }
-
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/lowongan/:id" element={<JobDetail />} />
+        <Route path="/tersimpan" element={<SavedJobsPage />} />
       </Routes>
     </Router>
   );

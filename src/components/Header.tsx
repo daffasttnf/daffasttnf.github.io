@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 import CountUp from "react-countup";
 import { useJobs } from "../hooks/useJobs";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
+  const navigate = useNavigate();
   const { stats, statsLoading } = useJobs();
   const [isVisible, setIsVisible] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
@@ -153,12 +155,12 @@ const Header = () => {
           <motion.div
             key={i}
             className={`absolute rounded-full ${i % 4 === 0
-                ? 'bg-amber-300/15 w-1 h-1'
-                : i % 4 === 1
-                  ? 'bg-purple-300/15 w-0.5 h-0.5'
-                  : i % 4 === 2
-                    ? 'bg-cyan-300/15 w-0.5 h-0.5'
-                    : 'bg-white/5 w-0.5 h-0.5'
+              ? 'bg-amber-300/15 w-1 h-1'
+              : i % 4 === 1
+                ? 'bg-purple-300/15 w-0.5 h-0.5'
+                : i % 4 === 2
+                  ? 'bg-cyan-300/15 w-0.5 h-0.5'
+                  : 'bg-white/5 w-0.5 h-0.5'
               }`}
             style={{
               left: `${Math.random() * 100}%`,
@@ -201,25 +203,39 @@ const Header = () => {
           animate={isVisible ? "visible" : "hidden"}
         >
           <div className="text-center">
-            {/* Animated Badge */}
-            <motion.div
-              variants={itemVariants}
-              className="inline-flex items-center bg-white/10 backdrop-blur-lg rounded-full px-4 py-2 mb-4 sm:mb-6 border border-white/20 shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <motion.span
-                className="w-2 h-2 bg-green-400 rounded-full mr-2"
-                animate={{ scale: [1, 1.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <span className="text-sm font-medium text-white/90">
-                {statsLoading
-                  ? "✨ Memuat data..."
-                  : `✨ ${stats ? formatNumber(stats["Jumlah Lowongan"]) : "1.450"
-                  }+ Lowongan Magang Tersedia`}
-              </span>
-            </motion.div>
+            <div className="flex justify-center gap-3 mb-4 sm:mb-6">
+              {/* Batch Badge */}
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center bg-amber-400/20 backdrop-blur-lg rounded-full px-4 py-2 border border-amber-400/30 shadow-lg"
+                whileHover={{ scale: 1.05 }}
+              >
+                <span className="w-2 h-2 bg-amber-400 rounded-full mr-2 animate-pulse" />
+                <span className="text-sm font-bold text-amber-100">
+                  🔥 Batch 3
+                </span>
+              </motion.div>
+
+              {/* Stats Badge */}
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center bg-white/10 backdrop-blur-lg rounded-full px-4 py-2 border border-white/20 shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              >
+                <motion.span
+                  className="w-2 h-2 bg-green-400 rounded-full mr-2"
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className="text-sm font-medium text-white/90">
+                  {statsLoading
+                    ? "✨ Memuat data..."
+                    : `✨ ${stats ? formatNumber(stats["Jumlah Lowongan"]) : "1.450"
+                    }+ Lowongan Magang Tersedia`}
+                </span>
+              </motion.div>
+            </div>
 
             {/* Main Heading - OPTIMIZED FOR ALL SCREENS */}
             <motion.div
@@ -430,6 +446,18 @@ const Header = () => {
                   />
                 </svg>
                 <span className="relative z-10 font-bold">Cari Magang Sekarang</span>
+              </motion.button>
+
+              <motion.button
+                onClick={() => navigate('/tersimpan')}
+                className="relative bg-white/10 backdrop-blur-md text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-white/20 border border-white/20 transition-all duration-300 shadow-lg flex items-center w-full sm:w-auto justify-center group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                <span>Tersimpan</span>
               </motion.button>
             </motion.div>
           </div>

@@ -4,9 +4,10 @@ import { exportService } from '../services/exportService';
 interface ExportSectionProps {
   allJobs: any[];
   onSaveJobs?: (jobs: any[]) => void;
+  provinceName?: string;
 }
 
-const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) => {
+const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs, provinceName }) => {
   const [isExporting, setIsExporting] = useState(false);
   const [lastExport, setLastExport] = useState<any>(null);
   const [dbSize, setDbSize] = useState<number>(0);
@@ -56,10 +57,14 @@ const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) =>
       }
 
       // Export ke Excel
-      await exportService.exportAllJobsToExcel(allJobs);
-      
+      const date = new Date().toISOString().split('T')[0];
+      const safeProvinceName = provinceName?.replace(/[^a-zA-Z0-9]/g, '_') || 'Semua_Provinsi';
+      const filename = `Lowongan_Magang_${safeProvinceName}_${date}.xlsx`;
+
+      await exportService.exportAllJobsToExcel(allJobs, filename);
+
       setProgress(100);
-      
+
       // Update info setelah export
       setTimeout(() => {
         loadExportInfo();
@@ -104,20 +109,20 @@ const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) =>
             </svg>
             Export Data Lowongan
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <span className="text-gray-600">Total Data:</span>
               <span className="font-semibold text-gray-900">{allJobs.length.toLocaleString()} lowongan</span>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
               <span className="text-gray-600">Database:</span>
               <span className="font-semibold text-gray-900">{formatFileSize(dbSize)}</span>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-gray-600">Terakhir Export:</span>
@@ -129,7 +134,7 @@ const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) =>
 
           {lastExport && (
             <div className="mt-2 text-xs text-gray-500">
-              File: <span className="font-mono">{lastExport.filename}</span> 
+              File: <span className="font-mono">{lastExport.filename}</span>
               • {lastExport.totalJobs.toLocaleString()} data
             </div>
           )}
@@ -167,7 +172,7 @@ const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) =>
             <span>{progress}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
@@ -182,8 +187,8 @@ const ExportSection: React.FC<ExportSectionProps> = ({ allJobs, onSaveJobs }) =>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div className="text-sm text-blue-700">
-            <strong>Tips:</strong> Data disimpan di browser database (IndexedDB) dan dapat menampung hingga 200MB+. 
-            Export terakhir akan tersimpan untuk referensi Anda.
+            <strong>Tips:</strong> Data yang diexport adalah data dari <strong>{provinceName || 'Semua Provinsi'}</strong> yang sedang Anda pilih.
+            File akan dinamai sesuai provinsi tersebut agar mudah dikelola.
           </div>
         </div>
       </div>

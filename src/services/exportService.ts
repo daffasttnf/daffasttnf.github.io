@@ -47,7 +47,7 @@ export class ExportService {
 
       // Hapus jobs lama untuk provinsi ini
       const clearRequest = store.index('provinsi').openCursor(IDBKeyRange.only(provinceCode));
-      
+
       clearRequest.onsuccess = () => {
         const cursor = clearRequest.result;
         if (cursor) {
@@ -92,7 +92,7 @@ export class ExportService {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([STORE_EXPORTS], 'readwrite');
       const store = transaction.objectStore(STORE_EXPORTS);
-      
+
       const historyRecord = {
         ...exportData,
         timestamp: Date.now(),
@@ -231,12 +231,12 @@ export class ExportService {
   }
 
   // Export utama
-  async exportAllJobsToExcel(jobs: any[]): Promise<void> {
+  async exportAllJobsToExcel(jobs: any[], customFilename?: string): Promise<void> {
     try {
       const blob = this.generateExcelFile(jobs);
       const timestamp = new Date().toISOString().split('T')[0];
-      const filename = `lowongan-magang-${timestamp}.xlsx`;
-      
+      const filename = customFilename || `lowongan-magang-${timestamp}.xlsx`;
+
       this.downloadExcel(blob, filename);
 
       // Simpan history

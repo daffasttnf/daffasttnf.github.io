@@ -8,6 +8,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import ExportSection from "./ExportSection";
 import { exportService } from "../services/exportService";
+import { getProvinceName } from "../constants/regions";
 
 const HomePage = () => {
   const {
@@ -676,6 +677,7 @@ const HomePage = () => {
         <ExportSection
           allJobs={allJobsForExport}
           onSaveJobs={handleSaveJobsForExport}
+          provinceName={getProvinceName(filters.provinsi)}
         />
       </div>
 
