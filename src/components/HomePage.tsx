@@ -23,6 +23,8 @@ const HomePage = () => {
     availableCompanies,
     refreshData,
     allJobs,
+    lastFetchTime,
+    manualSync,
   } = useJobs();
 
   const mainContentRef = useRef<HTMLDivElement>(null);
@@ -194,6 +196,22 @@ const HomePage = () => {
     return activeFilters.join(" dan ");
   };
 
+  // Format last fetch time
+  const formatLastFetch = () => {
+    if (!lastFetchTime) return 'Belum pernah';
+    const now = Date.now();
+    const diff = now - lastFetchTime;
+    const minutes = Math.floor(diff / 60000);
+
+    if (minutes < 1) return 'Baru saja';
+    if (minutes === 1) return '1 menit yang lalu';
+    if (minutes < 60) return `${minutes} menit yang lalu`;
+
+    const hours = Math.floor(minutes / 60);
+    if (hours === 1) return '1 jam yang lalu';
+    return `${hours} jam yang lalu`;
+  };
+
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -254,7 +272,7 @@ const HomePage = () => {
                 <div className="flex items-center space-x-2 flex-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-green-700 text-sm font-medium">
-                    📥 Sedang mengambil data lengkap... 
+                    📥 Sedang mengambil data lengkap...
                   </span>
                   <span className="text-green-600 text-sm">
                     (Halaman {fetchProgress.current} dari {fetchProgress.total})
@@ -263,6 +281,35 @@ const HomePage = () => {
                 <div className="text-green-600 text-xs">
                   Data akan terus bertambah
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Last Fetch Time & Manual Sync */}
+          {lastFetchTime && (
+            <div className="mb-4 p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-gray-600 text-sm">
+                      Terakhir disinkronkan: <span className="font-medium text-gray-900">{formatLastFetch()}</span>
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => manualSync()}
+                  disabled={fetchProgress.isBackgroundFetching}
+                  className="flex items-center space-x-1 px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Sinkronkan ulang data"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Sync Ulang</span>
+                </button>
               </div>
             </div>
           )}
@@ -294,9 +341,8 @@ const HomePage = () => {
             {/* Page Info - Hidden on mobile when filters active */}
             {pagination.total > 0 && (
               <div
-                className={`flex items-center bg-primary-50 text-primary-800 px-3 py-1.5 rounded-lg text-sm font-medium ${
-                  getActiveFiltersText() ? "hidden sm:flex" : "flex"
-                }`}
+                className={`flex items - center bg - primary - 50 text - primary - 800 px - 3 py - 1.5 rounded - lg text - sm font - medium ${getActiveFiltersText() ? "hidden sm:flex" : "flex"
+                  } `}
               >
                 <svg
                   className="w-4 h-4 mr-1.5"
@@ -480,7 +526,7 @@ const HomePage = () => {
                                   Math.min(
                                     pagination.last_page,
                                     parseInt(e.currentTarget.value) ||
-                                      pagination.current_page
+                                    pagination.current_page
                                   )
                                 );
                                 handlePageChange(page);
@@ -493,14 +539,14 @@ const HomePage = () => {
                                 Math.min(
                                   pagination.last_page,
                                   parseInt(e.target.value) ||
-                                    pagination.current_page
+                                  pagination.current_page
                                 )
                               );
                               handlePageChange(page);
                               e.target.value = page.toString();
                             }}
                             className="w-12 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primary-500 text-center"
-                            // TIDAK ADA disabled state di sini
+                          // TIDAK ADA disabled state di sini
                           />
                         </div>
                       </div>
@@ -513,11 +559,10 @@ const HomePage = () => {
                           handlePageChange(pagination.current_page - 1)
                         }
                         disabled={pagination.current_page === 1}
-                        className={`p-2 text-gray-600 bg-white border border-gray-300 rounded-lg transition-colors ${
-                          pagination.current_page === 1 
-                            ? "opacity-40 cursor-not-allowed" 
-                            : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
-                        }`}
+                        className={`p - 2 text - gray - 600 bg - white border border - gray - 300 rounded - lg transition - colors ${pagination.current_page === 1
+                          ? "opacity-40 cursor-not-allowed"
+                          : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
+                          } `}
                         title="Sebelumnya"
                       >
                         <svg
@@ -575,11 +620,10 @@ const HomePage = () => {
                           handlePageChange(pagination.current_page + 1)
                         }
                         disabled={pagination.current_page === pagination.last_page}
-                        className={`p-2 text-gray-600 bg-white border border-gray-300 rounded-lg transition-colors ${
-                          pagination.current_page === pagination.last_page
-                            ? "opacity-40 cursor-not-allowed" 
-                            : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
-                        }`}
+                        className={`p - 2 text - gray - 600 bg - white border border - gray - 300 rounded - lg transition - colors ${pagination.current_page === pagination.last_page
+                          ? "opacity-40 cursor-not-allowed"
+                          : "hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
+                          } `}
                         title="Selanjutnya"
                       >
                         <svg

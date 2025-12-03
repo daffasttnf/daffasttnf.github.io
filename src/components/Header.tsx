@@ -32,7 +32,7 @@ const Header = () => {
   // Text rotation untuk subheading
   const subheadings = [
     "Cari magang atau cari jodoh? Why not both? 💘",
-    "Your career love story starts here! 🌟", 
+    "Your career love story starts here! 🌟",
     "Bukan PDKT, tapi Professional Development & Karier Transformation! ⚡",
   ];
 
@@ -98,9 +98,9 @@ const Header = () => {
       <div className="absolute inset-0">
         {/* Base Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary-900/80 via-primary-800/90 to-purple-900/80"></div>
-        
+
         {/* Animated Gradient Overlay */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-purple-500/10 to-cyan-400/10"
           animate={{
             opacity: [0.1, 0.2, 0.1],
@@ -111,9 +111,9 @@ const Header = () => {
             ease: "easeInOut" as const
           }}
         />
-        
+
         {/* Moving Grid */}
-        <div 
+        <div
           className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"
           style={{
             animation: 'gridMove 20s linear infinite'
@@ -133,7 +133,7 @@ const Header = () => {
             ease: "easeInOut" as const
           }}
         />
-        
+
         <motion.div
           className="absolute bottom-1/3 right-1/4 w-32 h-32 sm:w-48 sm:h-48 bg-purple-400/10 rounded-full blur-3xl"
           animate={{
@@ -152,15 +152,14 @@ const Header = () => {
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className={`absolute rounded-full ${
-              i % 4 === 0 
+            className={`absolute rounded-full ${i % 4 === 0
                 ? 'bg-amber-300/15 w-1 h-1'
                 : i % 4 === 1
-                ? 'bg-purple-300/15 w-0.5 h-0.5'
-                : i % 4 === 2
-                ? 'bg-cyan-300/15 w-0.5 h-0.5'
-                : 'bg-white/5 w-0.5 h-0.5'
-            }`}
+                  ? 'bg-purple-300/15 w-0.5 h-0.5'
+                  : i % 4 === 2
+                    ? 'bg-cyan-300/15 w-0.5 h-0.5'
+                    : 'bg-white/5 w-0.5 h-0.5'
+              }`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -217,9 +216,8 @@ const Header = () => {
               <span className="text-sm font-medium text-white/90">
                 {statsLoading
                   ? "✨ Memuat data..."
-                  : `✨ ${
-                      stats ? formatNumber(stats["Jumlah Lowongan"]) : "1.450"
-                    }+ Lowongan Magang Tersedia`}
+                  : `✨ ${stats ? formatNumber(stats["Jumlah Lowongan"]) : "1.450"
+                  }+ Lowongan Magang Tersedia`}
               </span>
             </motion.div>
 
@@ -240,7 +238,7 @@ const Header = () => {
                     >
                       Temukan
                     </motion.span>
-                    
+
                     <motion.span
                       className="min-w-[120px] sm:min-w-[140px] md:min-w-[160px] text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl relative"
                       variants={floatingVariants}
@@ -277,7 +275,7 @@ const Header = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-amber-300/20 to-yellow-400/20 blur-lg rounded-full -z-10 scale-110"></div>
                     </motion.span>
                   </div>
-                  
+
                   {/* Second Line: Impian Anda */}
                   <motion.div
                     className="whitespace-nowrap text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
@@ -316,27 +314,27 @@ const Header = () => {
               className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto mb-6 sm:mb-8 px-2"
             >
               {[
-                { 
-                  key: "Jumlah Lowongan", 
-                  label: "Lowongan Aktif", 
+                {
+                  key: "Jumlah Lowongan",
+                  label: "Lowongan Aktif",
                   value: stats?.["Jumlah Lowongan"] || 1450,
                   color: "from-blue-400 to-cyan-400"
                 },
-                { 
-                  key: "Jumlah Perusahaan", 
-                  label: "Perusahaan", 
+                {
+                  key: "Jumlah Perusahaan",
+                  label: "Perusahaan",
                   value: stats?.["Jumlah Perusahaan"] || 1003,
                   color: "from-purple-400 to-pink-400"
                 },
-                { 
-                  key: "Jumlah Pendaftar Magang", 
-                  label: "Pendaftar", 
+                {
+                  key: "Jumlah Pendaftar Magang",
+                  label: "Pendaftar",
                   value: stats?.["Jumlah Pendaftar Magang"] || 157837,
                   color: "from-green-400 to-emerald-400"
                 },
-                { 
-                  key: "Jumlah Peserta Magang", 
-                  label: "Peserta Magang", 
+                {
+                  key: "Jumlah Peserta Magang",
+                  label: "Peserta Magang",
                   value: stats?.["Jumlah Peserta Magang"] || 0,
                   color: "from-orange-400 to-red-400"
                 }
@@ -350,7 +348,7 @@ const Header = () => {
                 >
                   {/* Hover Gradient */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                  
+
                   {/* Animated Border */}
                   <div className={`absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
                     <div className="absolute inset-[1px] rounded-lg sm:rounded-xl bg-primary-900/90"></div>
@@ -398,14 +396,14 @@ const Header = () => {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
                 className="relative bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-primary-900 px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-primary-900 transition-all duration-300 shadow-lg flex items-center w-full sm:w-auto justify-center overflow-hidden group"
-                whileHover={{ 
+                whileHover={{
                   scale: 1.02,
                 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {/* Animated Gradient Background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 group-hover:from-amber-500 group-hover:via-orange-600 group-hover:to-amber-600 transition-all duration-1000" />
-                
+
                 {/* Shine Effect */}
                 <div className="absolute inset-0 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
