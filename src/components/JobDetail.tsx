@@ -280,9 +280,9 @@ const JobDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-24 lg:pb-12 font-sans">
       <SEO
-        title={`${job.nama} di ${job.perusahaan?.name || 'Perusahaan'}`}
-        description={`Lowongan magang ${job.nama} di ${job.perusahaan?.name}. Lokasi: ${job.lokasi_kota}, ${job.lokasi_provinsi}. Daftar sekarang di MagangHub Explorer!`}
-        image={job.perusahaan?.logo_url}
+        title={`${job.nama || 'Lowongan Magang'} di ${job.perusahaan?.name || 'Perusahaan'}`}
+        description={`Lowongan magang ${job.nama || 'Posisi'} di ${job.perusahaan?.name || 'Perusahaan'}. Lokasi: ${job.lokasi_kota || 'Kota'}, ${job.lokasi_provinsi || 'Provinsi'}. Daftar sekarang di MagangHub Explorer!`}
+        image={job.perusahaan?.logo_url || "https://magang-kemnaker.vercel.app/preview-image.jpg"}
         type="article"
         structuredData={structuredData}
       />
