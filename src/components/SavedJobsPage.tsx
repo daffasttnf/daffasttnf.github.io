@@ -2,12 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { useSavedJobs } from '../hooks/useSavedJobs';
 import JobCard from './JobCard';
 
+import SEO from './SEO';
+
 const SavedJobsPage = () => {
   const { savedJobs } = useSavedJobs();
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <SEO
+        title="Lowongan Tersimpan"
+        description="Kelola daftar lowongan magang favorit Anda. Simpan dan bandingkan lowongan magang impian Anda di MagangHub Explorer."
+      />
       {/* Sticky Header with proper z-index to prevent overlap */}
       <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-4 py-3 sm:py-4 max-w-7xl">

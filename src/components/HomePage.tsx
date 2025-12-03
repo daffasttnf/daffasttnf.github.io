@@ -12,6 +12,8 @@ import { exportService } from "../services/exportService";
 import { getProvinceName } from "../constants/regions";
 import { useSavedJobs } from "../hooks/useSavedJobs";
 
+import SEO from "./SEO";
+
 const HomePage = () => {
   const {
     jobs,
@@ -771,6 +773,10 @@ const HomePage = () => {
       </div>
 
       <Footer />
+      <SEO
+        title="Beranda"
+        description="Temukan ribuan lowongan magang resmi dari Kemnaker RI. Cari berdasarkan lokasi, perusahaan, dan jenjang pendidikan."
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { useSavedJobs, type SaveStatus } from '../hooks/useSavedJobs';
 import { fetchJobById } from '../services/api';
 import Loading from './Loading';
 import Toast from './Toast';
+import SEO from './SEO';
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -246,8 +247,45 @@ const JobDetail = () => {
   const programStudi = parseJSON(job.program_studi);
   const jenjang = parseJSON(job.jenjang);
 
+  // Structured Data for JobPosting
+  const structuredData = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": job.nama,
+    "description": job.deskripsi || `Lowongan magang ${job.nama} di ${job.perusahaan?.name || 'Perusahaan'}`,
+    "identifier": {
+      "@type": "PropertyValue",
+      "name": job.perusahaan?.name,
+      "value": job.id_posisi
+    },
+    "datePosted": job.created_at,
+    "validThrough": job.tgl_tutup,
+    "employmentType": "INTERN",
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": job.perusahaan?.name,
+      "logo": job.perusahaan?.logo_url
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": job.lokasi_kota,
+        "addressRegion": job.lokasi_provinsi,
+        "addressCountry": "ID"
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-24 lg:pb-12 font-sans">
+      <SEO
+        title={`${job.nama} di ${job.perusahaan?.name || 'Perusahaan'}`}
+        description={`Lowongan magang ${job.nama} di ${job.perusahaan?.name}. Lokasi: ${job.lokasi_kota}, ${job.lokasi_provinsi}. Daftar sekarang di MagangHub Explorer!`}
+        image={job.perusahaan?.logo_url}
+        type="article"
+        structuredData={structuredData}
+      />
       {/* Compact Sticky Header */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 py-3 max-w-6xl flex justify-between items-center">
