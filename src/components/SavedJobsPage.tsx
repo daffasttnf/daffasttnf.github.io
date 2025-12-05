@@ -36,7 +36,7 @@ const SavedJobsPage = () => {
                 </span>
                 <div className="ml-2 sm:ml-3 bg-gray-200 rounded-full h-1.5 sm:h-2 w-16 sm:w-24 overflow-hidden">
                   <div
-                    className="bg-primary-600 h-full rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 h-full rounded-full transition-all duration-300"
                     style={{ width: `${(savedJobs.length / 10) * 100}%` }}
                   ></div>
                 </div>
@@ -60,7 +60,7 @@ const SavedJobsPage = () => {
             </p>
             <button
               onClick={() => navigate('/')}
-              className="bg-primary-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-medium hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/20 hover:scale-105 active:scale-95 text-sm sm:text-base"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg shadow-purple-600/20 hover:scale-105 active:scale-95 text-sm sm:text-base"
             >
               Mulai Mencari Lowongan
             </button>

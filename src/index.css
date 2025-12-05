@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -24,7 +24,7 @@
   --color-gray-800: #1f2937;
   --color-gray-900: #111827;
 
-  --font-sans: "Inter", "Open Sans", "system-ui", "sans-serif";
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* Custom utility classes untuk primary colors */
@@ -32,30 +32,39 @@
   .bg-primary-50 {
     background-color: var(--color-primary-50);
   }
+
   .bg-primary-100 {
     background-color: var(--color-primary-100);
   }
+
   .bg-primary-200 {
     background-color: var(--color-primary-200);
   }
+
   .bg-primary-300 {
     background-color: var(--color-primary-300);
   }
+
   .bg-primary-400 {
     background-color: var(--color-primary-400);
   }
+
   .bg-primary-500 {
     background-color: var(--color-primary-500);
   }
+
   .bg-primary-600 {
     background-color: var(--color-primary-600);
   }
+
   .bg-primary-700 {
     background-color: var(--color-primary-700);
   }
+
   .bg-primary-800 {
     background-color: var(--color-primary-800);
   }
+
   .bg-primary-900 {
     background-color: var(--color-primary-900);
   }
@@ -63,30 +72,39 @@
   .text-primary-50 {
     color: var(--color-primary-50);
   }
+
   .text-primary-100 {
     color: var(--color-primary-100);
   }
+
   .text-primary-200 {
     color: var(--color-primary-200);
   }
+
   .text-primary-300 {
     color: var(--color-primary-300);
   }
+
   .text-primary-400 {
     color: var(--color-primary-400);
   }
+
   .text-primary-500 {
     color: var(--color-primary-500);
   }
+
   .text-primary-600 {
     color: var(--color-primary-600);
   }
+
   .text-primary-700 {
     color: var(--color-primary-700);
   }
+
   .text-primary-800 {
     color: var(--color-primary-800);
   }
+
   .text-primary-900 {
     color: var(--color-primary-900);
   }
@@ -94,9 +112,11 @@
   .border-primary-200 {
     border-color: var(--color-primary-200);
   }
+
   .border-primary-300 {
     border-color: var(--color-primary-300);
   }
+
   .border-primary-900 {
     border-color: var(--color-primary-900);
   }
@@ -104,6 +124,7 @@
   .hover\:bg-primary-800:hover {
     background-color: var(--color-primary-800);
   }
+
   .focus\:ring-primary-500:focus {
     --tw-ring-color: var(--color-primary-500);
   }
@@ -111,8 +132,10 @@
 
 @layer base {
   html {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -183,13 +206,16 @@
     0% {
       transform: translateX(0);
     }
+
     100% {
       transform: translateX(-100%);
     }
   }
+
   .animate-marquee-infinite {
     animation: marquee-infinite 40s linear infinite;
   }
+
   .group:hover .animate-marquee-infinite {
     animation-play-state: paused;
   }
@@ -201,10 +227,12 @@
   }
 
   @keyframes Typewriter-cursor {
+
     0%,
     50% {
       opacity: 1;
     }
+
     51%,
     100% {
       opacity: 0;
@@ -215,16 +243,19 @@
     0% {
       transform: translateX(-100%) skewX(-12deg);
     }
+
     100% {
       transform: translateX(200%) skewX(-12deg);
     }
   }
 
   @keyframes float {
+
     0%,
     100% {
       transform: translateY(0px);
     }
+
     50% {
       transform: translateY(-10px);
     }
@@ -238,6 +269,7 @@
     0% {
       transform: translateY(0) translateX(0);
     }
+
     100% {
       transform: translateY(30px) translateX(30px);
     }
@@ -250,135 +282,173 @@
   }
 
   @keyframes float-slow {
+
     0%,
     100% {
       transform: translateY(0px) rotate(0deg) scale(1);
     }
+
     33% {
       transform: translateY(-20px) rotate(120deg) scale(1.05);
     }
+
     66% {
       transform: translateY(10px) rotate(240deg) scale(0.95);
     }
   }
+
   @keyframes float-medium {
+
     0%,
     100% {
       transform: translateX(0px) translateY(0px) scale(1);
     }
+
     50% {
       transform: translateX(15px) translateY(-25px) scale(1.1);
     }
   }
+
   @keyframes float-fast {
+
     0%,
     100% {
       transform: translateY(0px) scale(1);
     }
+
     50% {
       transform: translateY(-15px) scale(1.08);
     }
   }
+
   @keyframes float-random {
+
     0%,
     100% {
       transform: translate(0, 0) rotate(0deg) scale(1);
       opacity: 0.8;
     }
+
     25% {
       transform: translate(20px, -25px) rotate(90deg) scale(1.1);
       opacity: 0.6;
     }
+
     50% {
       transform: translate(40px, 10px) rotate(180deg) scale(0.9);
       opacity: 0.4;
     }
+
     75% {
       transform: translate(-20px, -30px) rotate(270deg) scale(1.2);
       opacity: 0.6;
     }
   }
+
   @keyframes gradient-x {
+
     0%,
     100% {
       background-position: 0% 50%;
     }
+
     50% {
       background-position: 100% 50%;
     }
   }
+
   @keyframes spin-slow {
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
   }
+
   @keyframes spin-reverse-slow {
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(-360deg);
     }
   }
+
   @keyframes ping-slow {
     0% {
       transform: scale(1);
       opacity: 0.8;
     }
+
     75%,
     100% {
       transform: scale(2);
       opacity: 0;
     }
   }
+
   @keyframes pulse-slow {
+
     0%,
     100% {
       opacity: 0.3;
     }
+
     50% {
       opacity: 0.6;
     }
   }
+
   @keyframes shimmer {
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(100%);
     }
   }
+
   .animate-float-slow {
     animation: float-slow 15s ease-in-out infinite;
   }
+
   .animate-float-medium {
     animation: float-medium 12s ease-in-out infinite;
   }
+
   .animate-float-fast {
     animation: float-fast 8s ease-in-out infinite;
   }
+
   .animate-float-random {
     animation: float-random 20s ease-in-out infinite;
   }
+
   .animate-gradient-x {
     background-size: 200% 200%;
     animation: gradient-x 3s ease infinite;
   }
+
   .animate-spin-slow {
     animation: spin-slow 10s linear infinite;
   }
+
   .animate-spin-reverse-slow {
     animation: spin-reverse-slow 8s linear infinite;
   }
+
   .animate-ping-slow {
     animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
   }
+
   .animate-pulse-slow {
     animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
   .animate-shimmer {
     animation: shimmer 4s ease-in-out infinite;
   }

@@ -609,9 +609,28 @@ export const JobsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchAllStats();
   }, []);
 
-  // Fetch data ketika provinsi berubah (dengan cancel previous)
+  // Fetch data ketika provinsi berubah (dengan cancel previous dan debounce)
   useEffect(() => {
-    fetchAllJobsInBackground(filters.provinsi);
+    // Reset state immediately when province changes
+    setAllJobs([]);
+    setFilteredJobs([]);
+    setLoading(true);
+    setError(null);
+    setFetchProgress({
+      current: 0,
+      total: 0,
+      isFetchingAll: false,
+      isBackgroundFetching: false,
+    });
+
+    // Debounce untuk menghindari multiple rapid changes
+    const timeoutId = setTimeout(() => {
+      fetchAllJobsInBackground(filters.provinsi);
+    }, 300); // 300ms debounce
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [filters.provinsi]);
 
   // Apply filters ketika filter berubah

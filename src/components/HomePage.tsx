@@ -4,7 +4,6 @@ import { useJobs } from "../hooks/useJobs";
 import JobCard from "./JobCard";
 import FilterBar from "./FilterBar";
 import Loading from "./Loading";
-import RunningMessage from "./RunningMessage";
 import Header from "./Header";
 import Footer from "./Footer";
 import ExportSection from "./ExportSection";
@@ -225,7 +224,7 @@ const HomePage = () => {
 
   if (error && allJobs.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg border border-blue-100">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <div className="text-red-600 text-xl font-bold mb-4">
@@ -253,14 +252,61 @@ const HomePage = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100"
+      className="min-h-screen bg-white"
       ref={mainContentRef}
     >
-      {/* Running Message */}
-      <RunningMessage />
-
       {/* Header Section */}
       <Header />
+
+      {/* Intro Section */}
+      <div className="bg-white py-20 md:py-24">
+        <div className="container mx-auto px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"></div>
+              <p className="text-sm text-purple-600 font-bold uppercase tracking-wider">
+                Platform Magang Kemnaker
+              </p>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-8">
+              Platform yang{" "}
+              <span className="relative inline-block">
+                <span className="relative z-10 text-purple-600">ramah pengguna</span>
+                <svg className="absolute -bottom-2 left-0 w-full" height="10" viewBox="0 0 200 10" fill="none">
+                  <path d="M2 8C60 2 140 2 198 8" stroke="#a78bfa" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+              </span>
+              {" "}menawarkan berbagai lowongan magang dari{" "}
+              <span className="text-purple-600">berbagai industri</span>
+            </h2>
+            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl">
+              Memudahkan Anda untuk menjelajahi dan melamar posisi yang sesuai dengan tujuan karier Anda. Temukan peluang terbaik untuk mengembangkan skill dan pengalaman profesional.
+            </p>
+
+            {/* Feature Pills */}
+            <div className="flex flex-wrap gap-3 mt-8">
+              <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-purple-200 shadow-sm">
+                <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-semibold text-gray-700">Gratis 100%</span>
+              </div>
+              <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-purple-200 shadow-sm">
+                <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-semibold text-gray-700">Perusahaan Terverifikasi</span>
+              </div>
+              <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-purple-200 shadow-sm">
+                <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-semibold text-gray-700">Update Setiap Hari</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         {/* Partial Error Banner */}
@@ -359,7 +405,7 @@ const HomePage = () => {
                 <button
                   onClick={() => manualSync()}
                   disabled={fetchProgress.isBackgroundFetching}
-                  className="flex items-center justify-center gap-1 px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg transition-colors text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                   title="Sinkronkan ulang data"
                 >
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -383,7 +429,7 @@ const HomePage = () => {
               </div>
               <div className="text-gray-600 text-xs sm:text-sm md:text-base">
                 dari{" "}
-                <span className="font-semibold text-primary-900">
+                <span className="font-semibold text-purple-900">
                   {pagination.total}
                 </span>{" "}
                 lowongan
@@ -398,7 +444,7 @@ const HomePage = () => {
             {/* Page Info - Always visible on desktop, hidden on mobile when filters active */}
             {pagination.total > 0 && (
               <div
-                className={`flex items-center bg-primary-50 text-primary-800 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium w-full sm:w-auto justify-center sm:justify-start ${getActiveFiltersText() ? "hidden sm:flex" : "flex"
+                className={`flex items-center bg-purple-50 text-purple-800 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium w-full sm:w-auto justify-center sm:justify-start ${getActiveFiltersText() ? "hidden sm:flex" : "flex"
                   }`}
               >
                 <svg
@@ -653,7 +699,7 @@ const HomePage = () => {
                           <span className="text-gray-400 text-xs">•</span>
                         )}
 
-                        <button className="w-7 h-7 text-xs border border-primary-600 rounded text-white bg-primary-600 shadow-sm cursor-default">
+                        <button className="w-7 h-7 text-xs border border-purple-600 rounded text-white bg-gradient-to-r from-purple-600 to-indigo-600 shadow-sm cursor-default">
                           {pagination.current_page}
                         </button>
 
@@ -713,15 +759,15 @@ const HomePage = () => {
         {savedJobs.length > 0 && (
           <button
             onClick={() => navigate('/tersimpan')}
-            className="relative bg-white hover:bg-gray-50 text-primary-600 p-3 sm:p-3.5 rounded-full shadow-lg border-2 border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group"
+            className="relative bg-white hover:bg-purple-50 text-purple-600 p-3.5 rounded-full shadow-lg border-2 border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer group"
             aria-label="Lowongan Tersimpan"
           >
             {/* Badge with count */}
-            <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center border-2 border-white shadow-md animate-pulse">
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-md">
               {savedJobs.length}
             </div>
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6"
+              className="w-6 h-6"
               fill="currentColor"
               stroke="currentColor"
               strokeWidth={0.5}
@@ -730,7 +776,7 @@ const HomePage = () => {
               <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
             {/* Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
               Lowongan Tersimpan
             </div>
           </button>
@@ -740,11 +786,11 @@ const HomePage = () => {
         {showScrollTop && (
           <button
             onClick={scrollToFilter}
-            className="bg-primary-600 hover:bg-primary-700 text-white p-3 sm:p-3.5 rounded-full shadow-lg border border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-3.5 rounded-full shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer group"
             aria-label="Scroll ke filter"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -757,7 +803,7 @@ const HomePage = () => {
               />
             </svg>
             {/* Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
               Ke Filter
             </div>
           </button>

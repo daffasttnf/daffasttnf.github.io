@@ -146,7 +146,7 @@ const JobDetail = () => {
           {/* Animated Error Card */}
           <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 text-center relative overflow-hidden">
             {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-blue-100 rounded-full -mr-32 -mt-32 opacity-50"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full -mr-32 -mt-32 opacity-50"></div>
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-100 to-pink-100 rounded-full -ml-24 -mb-24 opacity-50"></div>
 
             {/* Content */}
@@ -174,9 +174,9 @@ const JobDetail = () => {
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
                 <button
                   onClick={() => navigate('/')}
-                  className="group relative bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-3.5 rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto overflow-hidden"
+                  className="group relative bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3.5 rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-primary-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -199,7 +199,7 @@ const JobDetail = () => {
                   Butuh bantuan? Coba{" "}
                   <button
                     onClick={() => navigate('/')}
-                    className="text-primary-600 hover:text-primary-700 font-semibold underline"
+                    className="text-purple-600 hover:text-purple-700 font-semibold underline"
                   >
                     cari lowongan lain
                   </button>
@@ -210,16 +210,16 @@ const JobDetail = () => {
           </div>
 
           {/* Tips Card */}
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-6">
+          <div className="mt-6 bg-purple-50 border border-purple-200 rounded-2xl p-4 sm:p-6">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-1">Tips</h3>
-                <p className="text-xs sm:text-sm text-blue-700">
+                <h3 className="text-sm sm:text-base font-semibold text-purple-900 mb-1">Tips</h3>
+                <p className="text-xs sm:text-sm text-purple-700">
                   Jika Anda mengakses link dari share, pastikan link masih valid.
                   Lowongan mungkin sudah ditutup atau API sedang dalam maintenance.
                 </p>
@@ -300,14 +300,14 @@ const JobDetail = () => {
             {/* Share Button */}
             <button
               onClick={() => setShowShareModal(true)}
-              className="p-2 rounded-lg transition-colors text-gray-400 hover:bg-gray-100 hover:text-primary-600"
+              className="p-2 rounded-lg transition-colors text-gray-400 hover:bg-gray-100 hover:text-purple-600"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
             </button>
             {/* Save/Bookmark Button */}
-            <button onClick={handleSaveToggle} className={`p-2 rounded-lg transition-colors ${isSaved ? 'text-primary-600 bg-primary-50' : 'text-gray-400 hover:bg-gray-100'}`}>
+            <button onClick={handleSaveToggle} className={`p-2 rounded-lg transition-colors ${isSaved ? 'text-purple-600 bg-purple-50' : 'text-gray-400 hover:bg-gray-100'}`}>
               <svg className="w-6 h-6" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
@@ -320,7 +320,7 @@ const JobDetail = () => {
         {/* Rest of the JobDetail component remains the same... */}
         {/* Compact Hero */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary-50 to-blue-50 rounded-bl-full -mr-8 -mt-8 opacity-50"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-bl-full -mr-8 -mt-8 opacity-50"></div>
           <div className="relative z-10 flex flex-col md:flex-row gap-6 items-start">
             <div className="flex-shrink-0 bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
               <img
@@ -339,12 +339,12 @@ const JobDetail = () => {
                 <span className="text-gray-500 text-xs font-medium">{job.perusahaan.nama_kabupaten}, {job.perusahaan.nama_provinsi}</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-1 leading-tight">{job.posisi}</h1>
-              <p className="text-primary-700 font-medium text-lg">{job.perusahaan.nama_perusahaan}</p>
+              <p className="text-purple-700 font-medium text-lg">{job.perusahaan.nama_perusahaan}</p>
             </div>
             <div className="hidden md:block">
               <button
                 onClick={handleDaftar}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-primary-600/20 transition-all hover:scale-105 active:scale-95"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:bg-gradient-to-r from-purple-700 to-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-purple-600/20 transition-all hover:scale-105 active:scale-95"
               >
                 Daftar Sekarang
               </button>
@@ -369,7 +369,7 @@ const JobDetail = () => {
             {/* Requirements (Compact Chips) */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                <span className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 text-lg">🎓</span>
+                <span className="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-3 text-lg">🎓</span>
                 Kualifikasi
               </h2>
 
@@ -377,7 +377,7 @@ const JobDetail = () => {
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">Jenjang Pendidikan</h3>
                 <div className="flex flex-wrap gap-2">
                   {jenjang.map((j: string, i: number) => (
-                    <span key={i} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm font-medium border border-blue-100">{j}</span>
+                    <span key={i} className="bg-purple-50 text-purple-700 px-3 py-1 rounded-lg text-sm font-medium border border-purple-100">{j}</span>
                   ))}
                 </div>
               </div>
@@ -426,7 +426,7 @@ const JobDetail = () => {
                   <p className="font-semibold text-sm text-gray-900">{formatDate(job.jadwal?.tanggal_mulai)}</p>
                 </div>
                 <div className="relative">
-                  <div className="absolute -left-[21px] top-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
+                  <div className="absolute -left-[21px] top-1 w-3 h-3 bg-purple-500 rounded-full border-2 border-white shadow-sm"></div>
                   <p className="text-xs text-gray-500 mb-0.5">Selesai Magang</p>
                   <p className="font-semibold text-sm text-gray-900">{formatDate(job.jadwal?.tanggal_selesai)}</p>
                 </div>
@@ -452,10 +452,10 @@ const JobDetail = () => {
 
       {/* Mobile Sticky Footer */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 md:hidden z-40 flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <button onClick={handleSaveToggle} className={`flex-1 py-2.5 rounded-xl font-bold border text-sm transition-colors ${isSaved ? 'bg-primary-50 text-primary-600 border-primary-200' : 'bg-white text-gray-700 border-gray-300'}`}>
+        <button onClick={handleSaveToggle} className={`flex-1 py-2.5 rounded-xl font-bold border text-sm transition-colors ${isSaved ? 'bg-purple-50 text-purple-600 border-purple-200' : 'bg-white text-gray-700 border-gray-300'}`}>
           {isSaved ? 'Tersimpan' : 'Simpan'}
         </button>
-        <button onClick={handleDaftar} className="flex-[2] bg-primary-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-primary-600/20 text-sm">
+        <button onClick={handleDaftar} className="flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-purple-600/20 text-sm">
           Daftar Sekarang
         </button>
       </div>
@@ -483,7 +483,7 @@ const JobDetail = () => {
               </button>
 
               <button onClick={() => handleShare('telegram')} className="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition-colors group">
-                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.121.099.155.232.171.326.016.093.036.306.02.472z" />
                   </svg>
@@ -501,7 +501,7 @@ const JobDetail = () => {
               </button>
 
               <button onClick={() => handleShare('facebook')} className="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition-colors group">
-                <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
@@ -510,7 +510,7 @@ const JobDetail = () => {
               </button>
 
               <button onClick={() => handleShare('linkedin')} className="flex flex-col items-center p-4 rounded-xl hover:bg-gray-50 transition-colors group">
-                <div className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-purple-700 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-0.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>

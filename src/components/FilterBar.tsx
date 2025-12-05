@@ -331,7 +331,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-200 mb-6">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6">
       {/* Progress Bar untuk Fetching Data */}
       {fetchProgress.isFetchingAll && (
         <div className="mb-4">
@@ -343,7 +343,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 h-2 rounded-full transition-all duration-300"
               style={{
                 width: `${(fetchProgress.current / fetchProgress.total) * 100
                   }%`,
