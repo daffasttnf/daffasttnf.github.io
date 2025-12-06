@@ -116,19 +116,14 @@ const HomePage = () => {
 
   // Fungsi untuk scroll ke grid jobs (hanya jika diperlukan)
   const scrollToJobsGrid = () => {
-    const currentScrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
+    if (jobsGridRef.current) {
+      const headerHeight = 80;
+      const gridPosition = jobsGridRef.current.offsetTop - headerHeight;
+      const currentScrollY = window.scrollY;
 
-    if (currentScrollY < 300) {
-      return;
-    }
-
-    if (currentScrollY + windowHeight > documentHeight - 500) {
-      if (jobsGridRef.current) {
-        const headerHeight = 80;
-        const gridPosition = jobsGridRef.current.offsetTop - headerHeight;
-
+      // Hanya scroll jika posisi kita saat ini berada DI BAWAH posisi grid
+      // (artinya kita sudah scroll melewati bagian atas grid)
+      if (currentScrollY > gridPosition) {
         window.scrollTo({
           top: gridPosition,
           behavior: "smooth",
