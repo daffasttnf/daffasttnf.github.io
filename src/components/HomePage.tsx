@@ -753,21 +753,21 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Floating Action Buttons - Bottom Right */}
-      <div className="fixed bottom-4 right-4 z-40 flex flex-col gap-3">
+      {/* Floating Action Buttons - Bottom Right - Compact & Responsive */}
+      <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-40 flex flex-col gap-2 sm:gap-2.5">
         {/* Saved Jobs Button - Only show when there are saved jobs */}
         {savedJobs.length > 0 && (
           <button
             onClick={() => navigate('/tersimpan')}
-            className="relative bg-white hover:bg-purple-50 text-purple-600 p-3.5 rounded-full shadow-lg border-2 border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer group"
+            className="relative bg-white hover:bg-purple-50 text-purple-600 p-2.5 sm:p-3 rounded-full shadow-md sm:shadow-lg border-2 border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group"
             aria-label="Lowongan Tersimpan"
           >
-            {/* Badge with count */}
-            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-md">
+            {/* Badge with count - Smaller */}
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4.5 h-4.5 sm:w-5 sm:h-5 min-w-[18px] min-h-[18px] sm:min-w-[20px] sm:min-h-[20px] flex items-center justify-center border-2 border-white shadow-sm">
               {savedJobs.length}
             </div>
             <svg
-              className="w-6 h-6"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="currentColor"
               stroke="currentColor"
               strokeWidth={0.5}
@@ -775,9 +775,9 @@ const HomePage = () => {
             >
               <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
-            {/* Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
-              Lowongan Tersimpan
+            {/* Tooltip - Hidden on mobile */}
+            <div className="hidden sm:block absolute right-full mr-2.5 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-2.5 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+              Tersimpan
             </div>
           </button>
         )}
@@ -786,11 +786,11 @@ const HomePage = () => {
         {showScrollTop && (
           <button
             onClick={scrollToFilter}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-3.5 rounded-full shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer group"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-2.5 sm:p-3 rounded-full shadow-md sm:shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group"
             aria-label="Scroll ke filter"
           >
             <svg
-              className="w-6 h-6"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -802,8 +802,8 @@ const HomePage = () => {
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"
               />
             </svg>
-            {/* Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+            {/* Tooltip - Hidden on mobile */}
+            <div className="hidden sm:block absolute right-full mr-2.5 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-2.5 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
               Ke Filter
             </div>
           </button>
